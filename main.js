@@ -10,10 +10,23 @@ let VTboundingBox = {
 let startButton = document.getElementById("start");
 startButton.addEventListener('click', startGame);
 
+let latitude = document.getElementById("latitude");
+let longitude = document.getElementById("longitude");
+let county = document.getElementById("county");
+let town = document.getElementById("town");
+
 let startLat, startLon;
 
 
-var map = L.map('map').setView([44.050254, -72.575367], 7);
+// var map = L.map('map').setView([44.050254, -72.575367], 7);
+
+var map = L.map("map", {
+    center: [44.050254, -72.575367],
+    zoom: 7,
+    fadeAnimation: true,
+    zoomAnimation: true
+});
+
 
 var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     // attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
@@ -35,6 +48,11 @@ function startGame() {
     startButton.disabled = true;
     quit.disabled = false;
     guess.disabled = false;
+
+    latitude.textContent += " ?";
+    longitude.textContent += " ?";
+    county.textContent += " ?";
+    town.textContent += " ?";
 
     getRandomLat(VTboundingBox["minLat"], VTboundingBox["maxLat"])
     console.log(startLat)
@@ -62,9 +80,24 @@ function pipTest(lat, lon) {
         // tries += 1;
         pipTest(startLat, startLon);
     } else { 
+        console.log('startLat:', startLat, 'startLon:', startLon);
         fullStateLayer.remove();
-        map.panTo([startLat, startLon]).zoomIn(8);
-        L.marker([startLat, startLon]).addTo(map);
+        map.setView([startLat, startLon], 15, {
+            pan: {
+                animate: true,
+                duration: 20
+            },
+            zoom: {
+                animate: true
+            }
+        });
+        // map.panTo([startLat, startLon]);
+        //map.zoomIn(3);
+        let marker = L.marker([startLat, startLon]);
+        marker.addTo(map);
+        marker.bindPopup("Where is this?").openPopup();
+
+        // L.marker([startLat, startLon]).addTo(map);
         //map = L.map('map').setView([startLat, startLon], 18);
     }
 }
