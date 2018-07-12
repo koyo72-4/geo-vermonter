@@ -1,39 +1,141 @@
+body {
+    background-image: url('./1827Map.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#containerInBody {
+    padding-top: 20px;
+
+}
 .nav-item {
     margin: 10px;
 }
 
-img {
-
+#glass {
     width:600px;
     height:auto;
+    position: absolute;
+    top:0px;
 }
 
 #VTmap {
     width:90%;
+    border: 1px solid black;
+    padding: 10px;
+    background-color: white;
 }
 
 #map {
     top:10px;
     left:10px;
-
     width:400px;
     height: 400px;
     border-radius:50%;
     border: 1 solid blue;
 }
 
-#glass {
-    position: absolute;
-    top:0px;
-}
-
 #carmen {
     width:75%;
 }
 
+#upperRightPanel {
+    margin-top: 20px;
+}
+
+ #direction-buttons button {
+     width:40px;
+     height:40px;
+     padding: 2px;
+     margin: 2px;
+     font-size: 25px;
+ }
+
+ #direction-buttons div {
+     display: flex;
+     align-items: center;
+ }
+
+ #north, #east, #west, #south {
+     color: green;
+ }
+
+ #northeast, #southeast, #southwest, #northwest {
+    color: #62a354;
+ }
+
+ #northeast i {
+    transform: rotate(45deg);
+ }
+
+ #southeast i {
+    transform: rotate(135deg)
+ }
+
+ #northwest i {
+    transform: rotate(315deg)
+ }
+
+ #southwest i {
+    transform: rotate(225deg)
+ }
+
+ #tinyCarmen {
+     width: 20px;
+     height:auto;
+ }
 
 #direction-buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    border: 2px solid gray;
+    border-radius: 10%;
+    background: #c9dd57;
+    opacity: 1;
+    position: absolute;
+    top: 450px;
+    left: 125px;
+    width: 150px;
+    height:150px;
 }
+
+#score {
+    border: 1px solid beige;
+    background-color: ivory;
+    opacity: .9;
+    font-size:  40px;
+    color: black;   
+
+}
+
+#info {
+
+}
+
+#buttons {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+}
+
+#buttons button:first-of-type {
+    margin-top: 20px;
+}
+
+#buttons button {
+    width: 200px;
+    margin-bottom: 20px;
+}
+
+#youWon {
+    display:none;
+    text-align: center;
+    font-size: 50px;
+    color: #62a354;
+}
+
+
+
