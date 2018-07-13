@@ -5,6 +5,10 @@ let VTboundingBox = {
     minLat: 42.7395
 };
 
+let marker
+
+let gameState
+
 let startButton = document.getElementById("start");
 startButton.addEventListener('click', startGame);
 
@@ -14,22 +18,32 @@ let county = document.getElementById("county");
 let town = document.getElementById("town");
 
 
-// $("#myModal").on('shown.bs.modal', function () {
-//     $("#youWon").css("display", "none")
-//     $("#guessBtn").css("display", "block")
-//     $("#youWon").text("You Won!!!")
-// });
-
 $("#myModal").on('hidden.bs.modal', function () {
     $("#youWon").css("display", "none")
     $("#guessBtn").css("display", "block")
-    $("#youWon").text("You Won!!!")
 });
 
 $("#guessBtn").on('click', function () {
-    let clickedCounty = event.target.id
-    event.target.disabled = true
-    winTest(clickedCounty)
+
+    if (event.target.tagName === "BUTTON") {
+        let clickedCounty = event.target.id
+        event.target.disabled = true
+        winTest(clickedCounty)
+    }
+
+});
+
+$("#quit").on('click', function () {
+
+
+    $("#county").text("County: " + correctCounty)
+    $("#town").text("Town: " + correctTown)
+    $("#latitude").text("Latitude: " + startLat)
+    $("#longitude").text("Longitude: " + startLon)
+
+    startButton.disabled = false;
+    quit.disabled = true;
+    guess.disabled = true;
 });
 
 $("#zoomIn").on('click', function () {
@@ -137,115 +151,115 @@ Esri_WorldImagery.addTo(map)
 let fullStateLayer = L.geoJson(border_data);
 
 fullStateLayer.addTo(map)
-
+map.dragging.disable();
+map.touchZoom.disable();
+map.doubleClickZoom.disable();
+map.scrollWheelZoom.disable();
+map.boxZoom.disable();
+map.keyboard.disable();
+if (map.tap) map.tap.disable();
+document.getElementById('map').style.cursor = 'default';
 
 
 function startGame() {
+
+    gameState = "playing"
+
+    if (marker != undefined) {
+        marker.remove();
+    }
+
+
     startButton.disabled = true;
     quit.disabled = false;
     guess.disabled = false;
 
-    latitude.textContent += " ?";
-    longitude.textContent += " ?";
-    county.textContent += " ?";
-    town.textContent += " ?";
+    latitude.textContent = "Latitude: ?";
+    longitude.textContent = "Longitude: ?";
+    county.textContent = "County: ?";
+    town.textContent = "Town: ?";
     $("#score").text("SCORE: " + score);
 
     getRandomLat(VTboundingBox["minLat"], VTboundingBox["maxLat"])
-    console.log(startLat)
 
     getRandomLon(VTboundingBox["minLon"], VTboundingBox["maxLon"])
-    console.log(startLon)
 
     pipTest(startLat, startLon);
-    townTest(startLat, startLon);
+    correctTown = getTown(startLat, startLon);
 }
 
-function townTest(lat, lon) {
+function getTown(lat, lon) {
     let layer = L.geoJson(town_data);
     let results = leafletPip.pointInLayer([lon, lat], layer);
-    console.log("The Town stuff is: ");
-    console.log(results.features);
+    results = results[0]
+    results = results.feature.properties["TOWNNAMEMC"]
+    console.log(results)
+    return results
 }
 
 function pipTest(lat, lon) {
 
     let layer = L.geoJson(border_data);
     let results = leafletPip.pointInLayer([lon, lat], layer);
-    console.log(results.properties)
 
     if (results.length === 0) {
         getRandomLat(VTboundingBox["minLat"], VTboundingBox["maxLat"])
-        console.log(startLat)
 
         getRandomLon(VTboundingBox["minLon"], VTboundingBox["maxLon"])
-        console.log(startLon)
 
         pipTest(startLat, startLon);
     } else {
-        console.log('startLat:', startLat, 'startLon:', startLon);
-        fullStateLayer.remove();
-        currentZoom = gameZoom
-        map.setView([startLat, startLon], currentZoom, {
-            pan: {
-                animate: true,
-                duration: 20
-            },
-            zoom: {
-                animate: true
-            }
-        });
-        // map.panTo([startLat, startLon]);
-        //map.zoomIn(3);
-        let marker = L.marker([startLat, startLon], { icon: carmenIcon });
-        currLat = startLat
-        currLon = startLon
-        marker.addTo(map);
-        marker.bindPopup("Where am I?").openPopup();
-        // L.marker([startLat, startLon]).addTo(map);
-        //map = L.map('map').setView([startLat, startLon], 18);
-
-        fetch('https://nominatim.openstreetmap.org/reverse?lat=' + startLat + '&lon=' + startLon + '&format=json')
-            .then(function (response) {
-                console.log(response);
-                return response.json();
-            })
-            .then(function (jsonResponse) {
-                console.log(jsonResponse);
-                console.log(jsonResponse.address.county.replace(" County", ""));
-                correctCounty = jsonResponse.address.county.replace(" County", "");
-                return jsonResponse
-
-            })
-            .then(function (jsonAddress) {
-                getTown(jsonAddress)
-
-            });
+        setStartPoint()
     }
 }
 
+function setStartPoint() {
+
+    fullStateLayer.remove();
+    currentZoom = gameZoom
+    map.setView([startLat, startLon], currentZoom, {
+        pan: {
+            animate: true,
+            duration: 20
+        },
+        zoom: {
+            animate: true
+        }
+    });
+
+    marker = L.marker([startLat, startLon], { icon: carmenIcon });
+    currLat = startLat
+    currLon = startLon
+    marker.addTo(map);
+    marker.bindPopup("Where am I?").openPopup();
 
 
-function getTown(jsonAddress) {
-    console.log(jsonAddress)
-    // fetch('https://nominatim.openstreetmap.org/search?format=json&' +jsonAddress.address.hamlet)
-
-    fetch("https://nominatim.openstreetmap.org/search/Vermont/Orange%20County/Beanville/135?format=json&polygon=1&addressdetails=1")
+    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + startLat + '&lon=' + startLon + '&format=json')
         .then(function (response) {
-            console.log(response.json());
             return response.json();
         })
         .then(function (jsonResponse) {
-            console.log(jsonResponse);
-            console.log(jsonResponse.hamlet);
-
-
+            correctCounty = jsonResponse.address.county.replace(" County", "");
+            return jsonResponse
         })
-        .then(function (jsonAddress) {
-            getTown(jsonAddress)
 
-        });
+
+
+    enableZoomAndDirButtons()
+
 }
+
+function enableZoomAndDirButtons() {
+
+    $("#direction-buttons button").each(function (index) {
+        $(this).prop('disabled', false)
+    })
+
+    $("#zoom-buttons button").each(function (index) {
+        $(this).prop('disabled', false)
+    })
+}
+
 
 function getRandomLat(min, max) {
     startLat = Math.random() * (max - min) + min; //The maximum is inclusive and the minimum is inclusive
@@ -260,12 +274,9 @@ function travel(direction) {
     let shiftDistance = .0015
 
     let shiftDisForDiag = Math.sqrt(Math.pow(.0015, 2) / 2)
-    console.log(shiftDisForDiag)
-    // console.log ("After hitting north, currLat is: " + currLat)
     switch (direction) {
         case "north":
             currLat += shiftDistance
-            console.log("After hitting north, currLat is: " + currLat)
             changeScore(-1);
             break;
         case "south":
@@ -309,13 +320,16 @@ function travel(direction) {
 }
 
 function changeScore(pointDifference) {
+    if (gameState === "playing") {
     score += pointDifference;
-    console.log(score);
     $("#score").text("SCORE: " + score);
+    }
 }
 
 function winTest(clickedCounty) {
     if (clickedCounty === correctCounty) {
+        gameState = "over"
+        $("#youWon").text("YOU WON!!!")
         $("#youWon").css("display", "block")
         $("#guessBtn").css("display", "none")
 
@@ -323,6 +337,11 @@ function winTest(clickedCounty) {
         $("#town").text("Town: " + correctTown)
         $("#latitude").text("Latitude: " + startLat)
         $("#longitude").text("Longitude: " + startLon)
+
+        startButton.disabled = false;
+        quit.disabled = true;
+        guess.disabled = true;
+
     }
 
     else {
