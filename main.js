@@ -14,13 +14,45 @@ let county = document.getElementById("county");
 let town = document.getElementById("town");
 
 
+// $("#myModal").on('shown.bs.modal', function () {
+//     $("#youWon").css("display", "none")
+//     $("#guessBtn").css("display", "block")
+//     $("#youWon").text("You Won!!!")
+// });
 
-
-$("#guessBtn").on('click', function() {
-    let clickedCounty = event.target.id
-    winTest(clickedCounty)
-
+$("#myModal").on('hidden.bs.modal', function () {
+    $("#youWon").css("display", "none")
+    $("#guessBtn").css("display", "block")
+    $("#youWon").text("You Won!!!")
 });
+
+$("#guessBtn").on('click', function () {
+    let clickedCounty = event.target.id
+    event.target.disabled = true
+    winTest(clickedCounty)
+});
+
+$("#zoomIn").on('click', function () {
+    zoom("in");
+});
+
+$("#zoomOut").on('click', function () {
+    zoom("out");
+});
+
+function zoom(way) {
+
+    if (way === "in") {
+        currentZoom += 1
+    }
+    else {
+        currentZoom += -1
+        changeScore(-50)
+    }
+    map.setZoom(currentZoom)
+
+}
+
 
 
 $("#north").on('click', function () {
@@ -71,12 +103,18 @@ let score = 1000;
 
 // var map = L.map('map').setView([44.050254, -72.575367], 7);
 
+let currentZoom
+let gameZoom = 15
+let openZoom = 7
+
 var map = L.map("map", {
     center: [44.050254, -72.575367],
-    zoom: 7,
+    zoom: openZoom,
     fadeAnimation: true,
     zoomAnimation: true
 });
+
+map.dragging.disable()
 
 var carmenIcon = L.icon({
     iconUrl: './carmenOldSchool.png',
@@ -140,7 +178,8 @@ function pipTest(lat, lon) {
     } else {
         console.log('startLat:', startLat, 'startLon:', startLon);
         fullStateLayer.remove();
-        map.setView([startLat, startLon], 15, {
+        currentZoom = gameZoom
+        map.setView([startLat, startLon], currentZoom, {
             pan: {
                 animate: true,
                 duration: 20
@@ -160,42 +199,45 @@ function pipTest(lat, lon) {
         //map = L.map('map').setView([startLat, startLon], 18);
 
         fetch('https://nominatim.openstreetmap.org/reverse?lat=' + startLat + '&lon=' + startLon + '&format=json')
-        .then(function(response) {
-            console.log(response);
-            return response.json();
-        })
-        .then(function(jsonResponse) {
-            console.log(jsonResponse);
-            console.log(jsonResponse.address.county.replace(" County", ""));
-            correctCounty = jsonResponse.address.county.replace(" County", "");
-            return jsonResponse.address
-            
-        })
-        .then(function(jsonAddress){
-            getTown(jsonAddress)
-            
-        });
+            .then(function (response) {
+                console.log(response);
+                return response.json();
+            })
+            .then(function (jsonResponse) {
+                console.log(jsonResponse);
+                console.log(jsonResponse.address.county.replace(" County", ""));
+                correctCounty = jsonResponse.address.county.replace(" County", "");
+                return jsonResponse
+
+            })
+            .then(function (jsonAddress) {
+                getTown(jsonAddress)
+
+            });
     }
 }
 
-function getTown(jsonAddress){
-    
-    fetch('https://nominatim.openstreetmap.org/search?format=json&' +jsonAddress.hamlet)
-    .then(function(response) {
-        console.log(response);
-        return response.json();
-    })
-    .then(function(jsonResponse) {
-        console.log(jsonResponse);
-        console.log(jsonResponse.address.county.replace(" County", ""));
-        correctCounty = jsonResponse.address.county.replace(" County", "");
-        return jsonResponse.address
-        
-    })
-    .then(function(jsonAddress){
-        getTown(jsonAddress)
-        
-    });
+
+
+function getTown(jsonAddress) {
+    console.log(jsonAddress)
+    // fetch('https://nominatim.openstreetmap.org/search?format=json&' +jsonAddress.address.hamlet)
+
+    fetch("https://nominatim.openstreetmap.org/search/Vermont/Orange%20County/Beanville/135?format=json&polygon=1&addressdetails=1")
+        .then(function (response) {
+            console.log(response.json());
+            return response.json();
+        })
+        .then(function (jsonResponse) {
+            console.log(jsonResponse);
+            console.log(jsonResponse.hamlet);
+
+
+        })
+        .then(function (jsonAddress) {
+            getTown(jsonAddress)
+
+        });
 }
 
 function getRandomLat(min, max) {
@@ -266,14 +308,21 @@ function changeScore(pointDifference) {
 }
 
 function winTest(clickedCounty) {
-    if (clickedCounty === correctCounty){
-        $("#youWon").css("display" , "block")
-        $("#guessBtn").css("display" , "none")
+    if (clickedCounty === correctCounty) {
+        $("#youWon").css("display", "block")
+        $("#guessBtn").css("display", "none")
 
         $("#county").text("County: " + correctCounty)
         $("#town").text("Town: " + correctTown)
         $("#latitude").text("Latitude: " + startLat)
         $("#longitude").text("Longitude: " + startLon)
+    }
+
+    else {
+        changeScore(-150)
+        $("#youWon").css("display", "block")
+        $("#guessBtn").css("display", "none")
+        $("#youWon").text("Wrong! Lose 150 Points!")
     }
 }
 

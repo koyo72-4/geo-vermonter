@@ -22,9 +22,9 @@ body {
 
 #VTmap {
     width:90%;
-    border: 1px solid black;
+    border: 2px solid black;
     padding: 10px;
-    background-color: white;
+    background-image: url("beige.jpg");
 }
 
 #map {
@@ -86,6 +86,13 @@ body {
      height:auto;
  }
 
+
+
+/* #navBtns a {
+    background-image: url("pink.jpg");
+    border: solid 1px black;
+} */
+
 #direction-buttons {
     display: flex;
     flex-direction: column;
@@ -93,7 +100,7 @@ body {
     justify-content: center;
     border: 2px solid gray;
     border-radius: 10%;
-    background: #c9dd57;
+    background: url("beige.jpg");
     opacity: 1;
     position: absolute;
     top: 450px;
@@ -101,24 +108,75 @@ body {
     width: 150px;
     height:150px;
 }
+#glass {
+    filter: blur(.5px);
+    filter: drop-shadow( -5px -5px 5px #000 );
+}
+#zoom-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid gray;
+    border-radius: 10%;
+    background-image: url("beige.jpg");
+
+    opacity: 1;
+    position: absolute;
+    top: 450px;
+    left: 480px;
+    width: 50px;
+    height:80px;
+    transform: rotate(135deg)
+}
 
 #score {
-    border: 1px solid beige;
-    background-color: ivory;
-    opacity: .9;
-    font-size:  40px;
+    width:90%;
+    border: 2px solid black;
+    padding: 10px;
+    margin: 10px;
+    background-image: url("beige.jpg");
+    font-size:  30px;
     color: black;   
 
 }
 
 #info {
-
+    width:90%;
+    border: 2px solid black;
+    margin: 10px;
+    padding: 10px;
+    background-image: url("beige.jpg");
 }
 
 #buttons {
     display: flex;
     flex-direction: column;
     opacity: 1;
+}
+
+#start{
+    width:90%;
+    border: 2px solid black;
+    margin: 10px;
+    padding: 5px;
+    background-image: url("blueGreen.jpg");
+}
+
+#guess {
+    width:90%;
+    border: 2px solid black;
+    margin: 10px;
+    padding: 5px;
+    background-image: url("yellow.jpg");
+}
+
+#quit {
+    width:90%;
+    border: 2px solid black;
+    margin: 10px;
+    padding: 5px;
+    background-image: url("pink.jpg");
 }
 
 #buttons button:first-of-type {
@@ -128,13 +186,31 @@ body {
 #buttons button {
     width: 200px;
     margin-bottom: 20px;
+    color: black;
+    font-weight: bold;
 }
+
+#buttons button:hover {
+    width: 200px;
+    margin-bottom: 20px;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+}
+
+
 
 #youWon {
     display:none;
     text-align: center;
     font-size: 50px;
     color: #62a354;
+}
+
+#guessBtn button {
+
+width: 130px;
+margin:1px;
 }
 
 
