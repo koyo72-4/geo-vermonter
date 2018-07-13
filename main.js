@@ -158,14 +158,21 @@ function startGame() {
     console.log(startLon)
 
     pipTest(startLat, startLon);
+    townTest(startLat, startLon);
+}
 
+function townTest(lat, lon) {
+    let layer = L.geoJson(town_data);
+    let results = leafletPip.pointInLayer([lon, lat], layer);
+    console.log("The Town stuff is: ");
+    console.log(results.features);
 }
 
 function pipTest(lat, lon) {
 
     let layer = L.geoJson(border_data);
     let results = leafletPip.pointInLayer([lon, lat], layer);
-    console.log(results);
+    console.log(results.properties)
 
     if (results.length === 0) {
         getRandomLat(VTboundingBox["minLat"], VTboundingBox["maxLat"])
