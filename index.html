@@ -121,29 +121,40 @@
                 </div>
 
                 <div id="zoom-buttons">
-                        <div>
-                            <button id="zoomOut" disabled>
-                                <i class="fas fa-arrow-up"></i>
-                            </button>
+                    <div>
+                        <button id="zoomOut" disabled>
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
 
-                        </div>
-                        <div>
-
-                            <button id="zoomIn" disabled>
-                                <i class="fas fa-arrow-down"></i>
-                            </button>
-                        </div>
                     </div>
+                    <div>
+
+                        <button id="zoomIn" disabled>
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
 
             </div>
 
             <div id="upperRightPanel" class="col-sm-3">
-                <div id="score">SCORE: </div>
+                <div id="score">SCORE: 
+                        <span id="scoreVal"></span>
+                </div>
                 <div id="info">
-                    <div id="latitude">Latitude:</div>
-                    <div id="longitude">Longitude:</div>
-                    <div id="county">County:</div>
-                    <div id="town">Town:</div>
+                    <div id="latitude">Latitude:
+                        <span id="latVal">?</span>
+                    </div>
+                    <div id="longitude">Longitude:
+                        <span id="longVal"  class="longVal">?</span>
+                    </div>
+                    <div id="county">County:
+                        <span id="countyVal">?</span>
+                    </div>
+
+                    <div id="town">Town:
+                        <span id="townVal">?</span>
+                    </div>
                 </div>
                 <div id=buttons class="col-sm-12">
                     <button class="btn btn-success" id="start">Start a Game</button>

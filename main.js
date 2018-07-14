@@ -13,9 +13,8 @@ let startButton = document.getElementById("start");
 startButton.addEventListener('click', startGame);
 
 let latitude = document.getElementById("latitude");
+let latVal = document.getElementById("latVal");
 let longitude = document.getElementById("longitude");
-let county = document.getElementById("county");
-let town = document.getElementById("town");
 
 
 $("#myModal").on('hidden.bs.modal', function () {
@@ -36,10 +35,10 @@ $("#guessBtn").on('click', function () {
 $("#quit").on('click', function () {
 
 
-    $("#county").text("County: " + correctCounty)
-    $("#town").text("Town: " + correctTown)
-    $("#latitude").text("Latitude: " + startLat)
-    $("#longitude").text("Longitude: " + startLon)
+    $("#countyVal").text(correctCounty)
+    $("#townVal").html(correctTown)
+    $("#latVal").text(startLat.toFixed(4))
+    $("#longVal").text(startLon.toFixed(4))
 
     startButton.disabled = false;
     quit.disabled = true;
@@ -163,7 +162,7 @@ document.getElementById('map').style.cursor = 'default';
 
 function startGame() {
 
-    gameState = "playing"
+
 
     if (marker != undefined) {
         marker.remove();
@@ -174,11 +173,16 @@ function startGame() {
     quit.disabled = false;
     guess.disabled = false;
 
-    latitude.textContent = "Latitude: ?";
-    longitude.textContent = "Longitude: ?";
-    county.textContent = "County: ?";
-    town.textContent = "Town: ?";
-    $("#score").text("SCORE: " + score);
+    latVal.textContent = "?"
+
+    longVal.textContent = "?"
+
+    countyVal.textContent = "?"
+
+    townVal.textContent = "?"
+
+    score = 1000
+    $("#scoreVal").text(score);
 
     getRandomLat(VTboundingBox["minLat"], VTboundingBox["maxLat"])
 
@@ -217,21 +221,27 @@ function setStartPoint() {
 
     fullStateLayer.remove();
     currentZoom = gameZoom
+
     map.setView([startLat, startLon], currentZoom, {
         pan: {
             animate: true,
-            duration: 20
+            duration: 1
         },
         zoom: {
             animate: true
         }
     });
 
+
+
+
     marker = L.marker([startLat, startLon], { icon: carmenIcon });
     currLat = startLat
     currLon = startLon
     marker.addTo(map);
     marker.bindPopup("Where am I?").openPopup();
+
+    gameState = "playing"
 
 
     fetch('https://nominatim.openstreetmap.org/reverse?lat=' + startLat + '&lon=' + startLon + '&format=json')
@@ -240,22 +250,28 @@ function setStartPoint() {
         })
         .then(function (jsonResponse) {
             correctCounty = jsonResponse.address.county.replace(" County", "");
+            console.log(correctCounty + " is the County")
             return jsonResponse
         })
 
 
 
-    enableZoomAndDirButtons()
+    enableZoomDirCountyButtons()
+
 
 }
 
-function enableZoomAndDirButtons() {
+function enableZoomDirCountyButtons() {
 
     $("#direction-buttons button").each(function (index) {
         $(this).prop('disabled', false)
     })
 
     $("#zoom-buttons button").each(function (index) {
+        $(this).prop('disabled', false)
+    })
+
+    $("#guessBtn button").each(function (index) {
         $(this).prop('disabled', false)
     })
 }
@@ -321,8 +337,8 @@ function travel(direction) {
 
 function changeScore(pointDifference) {
     if (gameState === "playing") {
-    score += pointDifference;
-    $("#score").text("SCORE: " + score);
+        score += pointDifference;
+        $("#scoreVal").text(score);
     }
 }
 
@@ -333,15 +349,17 @@ function winTest(clickedCounty) {
         $("#youWon").css("display", "block")
         $("#guessBtn").css("display", "none")
 
-        $("#county").text("County: " + correctCounty)
-        $("#town").text("Town: " + correctTown)
-        $("#latitude").text("Latitude: " + startLat)
-        $("#longitude").text("Longitude: " + startLon)
+        $("#countyVal").text(correctCounty)
+
+        $("#townVal").html(correctTown)
+
+        $("#latVal").text(startLat.toFixed(4))
+
+        $("#longVal").text(startLon.toFixed(4))
 
         startButton.disabled = false;
         quit.disabled = true;
         guess.disabled = true;
-
     }
 
     else {
