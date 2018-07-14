@@ -255,5 +255,8 @@ width: 130px;
 margin:1px;
 }
 
+#guessBtn {
+    background-image: url("beige.jpg")
+}
 
 

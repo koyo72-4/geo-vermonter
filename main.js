@@ -6,6 +6,7 @@ let VTboundingBox = {
 };
 
 let marker
+let markerBread
 
 let gameState
 
@@ -131,9 +132,15 @@ map.dragging.disable()
 
 var carmenIcon = L.icon({
     iconUrl: './carmenOldSchool.png',
-    iconSize: [60, 105],
-    iconAnchor: [30, 105],
-    popupAnchor: [0, -105]
+    iconSize: [30, 52.5],
+    iconAnchor: [15, 52.5],
+    popupAnchor: [0, -52.5]
+});
+
+var breadIcon = L.icon({
+    iconUrl: './breadCrmb.png',
+    iconSize: [50, 41.52],
+    iconAnchor: [25, 41.52]
 });
 
 
@@ -161,8 +168,6 @@ document.getElementById('map').style.cursor = 'default';
 
 
 function startGame() {
-
-
 
     if (marker != undefined) {
         marker.remove();
@@ -333,6 +338,11 @@ function travel(direction) {
 
     }
     map.setView([currLat, currLon]);
+
+    if ((currLat != startLat || currLon != startLon) && gameState === "playing") {
+        markerBread = L.marker([currLat, currLon], { icon: breadIcon });
+        markerBread.addTo(map);
+    }
 }
 
 function changeScore(pointDifference) {
@@ -356,6 +366,19 @@ function winTest(clickedCounty) {
         $("#latVal").text(startLat.toFixed(4))
 
         $("#longVal").text(startLon.toFixed(4))
+
+
+        var highscore = localStorage.getItem("highscore");
+
+        if (highscore !== null) {
+            if (score > highscore) {
+                alert("You beat the high score which was " + highscore)
+                localStorage.setItem("highscore", score);
+            }
+        }
+        else {
+            localStorage.setItem("highscore", score);
+        }
 
         startButton.disabled = false;
         quit.disabled = true;
