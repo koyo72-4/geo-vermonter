@@ -390,8 +390,16 @@ function winTest(clickedCounty) {
             return total;
         }, []);
 
+        countyTowns.sort();
+
         console.log(countyTowns);
         console.log('correctTown: ' + '"' + correctTown + '"');
+
+        let defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.selected = true;
+        defaultOption.textContent = 'Select a town';
+        $('#townsList').append(defaultOption);
 
         let townOptions = countyTowns.map(function (town) {
             let option = document.createElement('option');
@@ -413,7 +421,7 @@ function winTest(clickedCounty) {
             console.log('selectedTown: ' + '"' + selectedTown + '"');
         });
 
-        $('#townSubmit').on('click', function () {
+        $('#townSubmit').one('click', function () {
             if (selectedTown === correctTown) {
                 $('#townAnswer').html('<span>Well done!!!! You got the county <em>and</em> the town!</span>');
                 changeScore(500);
