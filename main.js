@@ -5,6 +5,23 @@ let VTboundingBox = {
     minLat: 42.7395
 };
 
+let countyNumbers = {
+    Franklin: 11,
+    'Grand Isle': 13,
+    Orleans: 19,
+    Essex: 9,
+    Lamoille: 15,
+    Caledonia: 5,
+    Chittenden: 7,
+    Windsor: 27,
+    Rutland: 21,
+    Orange: 17,
+    Washington: 23,
+    Windham: 25,
+    Addison: 1,
+    Bennington: 3
+}
+
 let marker
 let markerBread
 
@@ -17,9 +34,12 @@ let latitude = document.getElementById("latitude");
 let latVal = document.getElementById("latVal");
 let longitude = document.getElementById("longitude");
 
+document.getElementById('guessTown').style.display = 'none';
+
 
 $("#myModal").on('hidden.bs.modal', function () {
     $("#youWon").css("display", "none")
+    document.getElementById('guessTown').style.display = 'none';
     $("#guessBtn").css("display", "block")
 });
 
@@ -111,6 +131,7 @@ let startLat, startLon;
 let currLat, currLon;
 let correctCounty;
 let correctTown;
+let selectedTown;
 
 let score = 1000;
 
@@ -354,35 +375,58 @@ function changeScore(pointDifference) {
 
 function winTest(clickedCounty) {
     if (clickedCounty === correctCounty) {
-        gameState = "over"
-        $("#youWon").text("YOU WON!!!")
-        $("#youWon").css("display", "block")
         $("#guessBtn").css("display", "none")
 
+        $("#youWon").text("YOU WON!!!")
+        $("#youWon").css("display", "block")
+        document.getElementById('guessTown').style.display = 'block';
+        $('#townsList').html('');
+        $('#townAnswer').html('');
+
+        let countyTowns = town_data.features.reduce(function (total, feature) {
+            if (feature.properties.CNTY === countyNumbers[correctCounty]) {
+                total.push(feature.properties.TOWNNAMEMC);
+            }
+            return total;
+        }, []);
+
+        console.log(countyTowns);
+        console.log('correctTown: ' + '"' + correctTown + '"');
+
+        let townOptions = countyTowns.map(function (town) {
+            let option = document.createElement('option');
+            option.value = town;
+            option.textContent = town;
+            return option;
+        });
+
+        for (let option of townOptions) {
+            $("#townsList").append(option);
+        }
+
         $("#countyVal").text(correctCounty)
-
-        $("#townVal").html(correctTown)
-
         $("#latVal").text(startLat.toFixed(4))
-
         $("#longVal").text(startLon.toFixed(4))
 
+        $('#townsList').on('change', function (event) {
+            selectedTown = event.target.value;
+            console.log('selectedTown: ' + '"' + selectedTown + '"');
+        });
 
-        var highscore = localStorage.getItem("highscore");
-
-        if (highscore !== null) {
-            if (score > highscore) {
-                alert("You beat the high score which was " + highscore)
-                localStorage.setItem("highscore", score);
+        $('#townSubmit').on('click', function () {
+            if (selectedTown === correctTown) {
+                $('#townAnswer').html('<span>Well done!!!! You got the county <em>and</em> the town!</span>');
+                changeScore(500);
+                console.log('score:', score);
+                $("#townVal").html(correctTown);
+                endGame();
+            } else {
+                $('#townAnswer').text('Sorry. The town was ' + correctTown + '. But great job getting the county!');
+                $("#townVal").html(correctTown);
+                $("#townVal").html(correctTown);
+                endGame();
             }
-        }
-        else {
-            localStorage.setItem("highscore", score);
-        }
-
-        startButton.disabled = false;
-        quit.disabled = true;
-        guess.disabled = true;
+        });
     }
 
     else {
@@ -391,6 +435,26 @@ function winTest(clickedCounty) {
         $("#guessBtn").css("display", "none")
         $("#youWon").text("Wrong! Lose 150 Points!")
     }
+}
+
+function endGame() {
+    gameState = "over";
+
+    var highscore = localStorage.getItem("highscore");
+
+    if (highscore !== null) {
+        if (score > highscore) {
+            alert("You beat the high score which was " + highscore)
+            localStorage.setItem("highscore", score);
+        }
+    }
+    else {
+        localStorage.setItem("highscore", score);
+    }
+
+    startButton.disabled = false;
+    quit.disabled = true;
+    guess.disabled = true;
 }
 
 
