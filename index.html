@@ -64,8 +64,22 @@
                         <p id="townAnswer"></p>
                         <br>
                         <p>Enter your name.</p>
-                        <input id="userName" type = "text" maxlength="3">
+                        <input id="userName" type="text" maxlength="3">
                         <button id="addScore">Add Score</button>
+                    </div>
+                    <div id="scoreContainer">
+                        <table  class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Score</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scoreTable">
+
+                            </tbody>
+                        </table>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -143,21 +157,21 @@
                         <button id="zoomIn" disabled>
                             <i class="fas fa-arrow-down"></i>
                         </button>
-                    </div> 
+                    </div>
                 </div>
 
             </div>
 
             <div id="upperRightPanel" class="col-sm-3">
-                <div id="score">SCORE: 
-                        <span id="scoreVal"></span>
+                <div id="score">SCORE:
+                    <span id="scoreVal"></span>
                 </div>
                 <div id="info">
                     <div id="latitude">Latitude:
                         <span id="latVal">?</span>
                     </div>
                     <div id="longitude">Longitude:
-                        <span id="longVal"  class="longVal">?</span>
+                        <span id="longVal" class="longVal">?</span>
                     </div>
                     <div id="county">County:
                         <span id="countyVal">?</span>

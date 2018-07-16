@@ -79,10 +79,11 @@ if (map.tap) map.tap.disable();
 
 document.getElementById('map').style.cursor = 'default';
 document.getElementById('guessTown').style.display = 'none';
-
+$("#scoreContainer").css("display", "none")
 
 $("#myModal").on('hidden.bs.modal', function () {
     $("#youWon").css("display", "none")
+    $("#scoreContainer").css("display", "none")
     document.getElementById('guessTown').style.display = 'none';
     $("#guessBtn").css("display", "block")
 });
@@ -419,31 +420,51 @@ $("#addScore").on('click', function () {
 
 
 function addNewScore(name) {
-    console.log(name)
-    scoreJSON = localStorage.getItem("scoreJSON")
-    if (scoreJSON === null) {
-        console.log("ITS NULL. LETS MAKE ONE")
+    if (!localStorage.getItem('scoreJSON')) {
+        localStorage.setItem('scoreJSON', '[]')
+    }
 
-        var newJSON = {
-            
-                1: { "Name": name, "Score": score, "Date": Date() }
-            
+    let scoreList = JSON.parse(localStorage.getItem('scoreJSON'));
+    scoreList.push({ "Name": "'" + name + "'", "Score": score, "Date": Date() })
+
+    localStorage.setItem('scoreJSON', JSON.stringify(scoreList));
+
+
+    loadHighScoreBoard()
+}
+
+function loadHighScoreBoard() {
+    let scoreList = JSON.parse(localStorage.getItem('scoreJSON'));
+
+
+
+    scoreList.sort((first, second) => {
+        if (first.Score > second.Score) {
+            return -1;
+        } else if (first.Score < second.Score) {
+            return 1;
+        } else {
+            return 0;
         }
-        localStorage.setItem('scoreJSON',JSON.stringify(newJSON))
+    });
 
+    localStorage.setItem('scoreJSON', JSON.stringify(scoreList))
+
+    for (i = 0; i < scoreList.length; i++) {
+        $("#scoreTable").append("<tr>")
+        $("#scoreTable").append("<td>" + scoreList[i].Name + "</td>");
+        $("#scoreTable").append("<td>" + scoreList[i].Score + "</td>");
+        $("#scoreTable").append("<td>" + scoreList[i].Date + "</td>");
+        $("#scoreTable").append("</tr>")
     }
-    else {
-        
-        JSON.parse(scoreJSON)
 
-        
-        
-        console.log(Object.keys(scoreJSON).length)
-
-    }
+    $("#youWon").css("display", "none")
+    $("#guessTown").css("display", "none")
+    $("#scoreContainer").css("display", "block")
 
 
 }
+
 
 function endGame() {
     gameState = "over";
