@@ -1,3 +1,19 @@
+let startLat, startLon;
+let currLat, currLon;
+let correctCounty;
+let correctTown;
+let selectedTown;
+
+let currentZoom
+let marker
+let markerBread
+
+let gameState
+let score = 1000;
+
+let gameZoom = 15
+let openZoom = 7
+
 let VTboundingBox = {
     maxLon: -73.3654,
     minLon: -71.5489,
@@ -42,22 +58,6 @@ var breadIcon = L.icon({
     iconSize: [50, 41.52],
     iconAnchor: [25, 41.52]
 });
-
-let startLat, startLon;
-let currLat, currLon;
-let correctCounty;
-let correctTown;
-let selectedTown;
-
-let score = 1000;
-
-let currentZoom
-let gameZoom = 15
-let openZoom = 7
-let marker
-let markerBread
-
-let gameState
 
 let startButton = document.getElementById("start");
 startButton.addEventListener('click', startGame);
