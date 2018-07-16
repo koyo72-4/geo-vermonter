@@ -74,58 +74,6 @@ $("#zoomOut").on('click', function () {
     zoom("out");
 });
 
-function zoom(way) {
-
-    if (way === "in") {
-        currentZoom += 1
-    }
-    else {
-        currentZoom += -1
-        changeScore(-50)
-    }
-    map.setZoom(currentZoom)
-
-}
-
-
-
-$("#north").on('click', function () {
-    travel("north");
-});
-
-$("#west").on('click', function () {
-    travel("west");
-});
-
-$("#east").on('click', function () {
-    travel("east");
-});
-
-$("#south").on('click', function () {
-    travel("south");
-});
-
-$("#southeast").on('click', function () {
-    travel("southeast");
-});
-
-$("#southwest").on('click', function () {
-    travel("southwest");
-});
-
-$("#northeast").on('click', function () {
-    travel("northeast");
-});
-
-$("#northwest").on('click', function () {
-    travel("northwest");
-});
-
-$("#center").on('click', function () {
-    travel("home");
-});
-
-
 
 let startLat, startLon;
 let currLat, currLon;
@@ -186,6 +134,49 @@ map.boxZoom.disable();
 map.keyboard.disable();
 if (map.tap) map.tap.disable();
 document.getElementById('map').style.cursor = 'default';
+
+
+
+
+
+$("#north").on('click', function () {
+    travel("north");
+});
+
+$("#west").on('click', function () {
+    travel("west");
+});
+
+$("#east").on('click', function () {
+    travel("east");
+});
+
+$("#south").on('click', function () {
+    travel("south");
+});
+
+$("#southeast").on('click', function () {
+    travel("southeast");
+});
+
+$("#southwest").on('click', function () {
+    travel("southwest");
+});
+
+$("#northeast").on('click', function () {
+    travel("northeast");
+});
+
+$("#northwest").on('click', function () {
+    travel("northwest");
+});
+
+$("#center").on('click', function () {
+    travel("home");
+});
+
+
+
 
 
 function startGame() {
@@ -284,6 +275,19 @@ function setStartPoint() {
 
     enableZoomDirCountyButtons()
 
+
+}
+
+function zoom(way) {
+
+    if (way === "in") {
+        currentZoom += 1
+    }
+    else {
+        currentZoom += -1
+        changeScore(-50)
+    }
+    map.setZoom(currentZoom)
 
 }
 
