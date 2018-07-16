@@ -253,6 +253,36 @@ flex-direction: column;
 
 width: 130px;
 margin:1px;
+
+
+}
+
+.btn-info {
+    color: #fff;
+    font-size:17px;
+    font-weight: bold;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    -webkit-text-stroke: 1px black;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    background-image: url("blueGreen.jpg"), linear-gradient(
+        rgb(238, 236, 236), 
+        rgb(231, 231, 231)
+      );
+      padding:1px;
+      padding-top: 2px;
+      padding-bottom: 2px;
+      margin:2px;
+}
+
+.btn-info:hover {
+    color: black;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    background-image: url("blueGreen.jpg"), linear-gradient(
+        rgb(238, 236, 236), 
+        rgb(231, 231, 231)
+      );
 }
 
 #guessBtn {
