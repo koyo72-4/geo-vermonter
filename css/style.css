@@ -1,5 +1,5 @@
 body {
-    background-image: url('./1827Map.jpg');
+    background-image: url('../images/1827Map.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -24,7 +24,7 @@ body {
     width:90%;
     border: 2px solid black;
     padding: 10px;
-    background-image: url("beige.jpg");
+    background-image: url("../images/beige.jpg");
 }
 
 #map {
@@ -103,7 +103,7 @@ body {
     justify-content: center;
     border: 2px solid gray;
     border-radius: 10%;
-    background: url("beige.jpg");
+    background: url("../images/beige.jpg");
     opacity: 1;
     position: absolute;
     top: 450px;
@@ -123,7 +123,7 @@ body {
     justify-content: center;
     border: 2px solid gray;
     border-radius: 10%;
-    background-image: url("beige.jpg");
+    background-image: url("../images/beige.jpg");
 
     opacity: 1;
     position: absolute;
@@ -140,7 +140,7 @@ body {
     border: 2px solid black;
     padding: 10px;
     margin: 10px;
-    background-image: url("beige.jpg");
+    background-image: url("../images/beige.jpg");
     font-size:  30px;
     color: black;   
 
@@ -151,7 +151,7 @@ body {
     border: 2px solid black;
     margin: 10px;
     padding: 10px;
-    background-image: url("beige.jpg");
+    background-image: url("../images/beige.jpg");
     z-index: 5;
 }
 
@@ -168,7 +168,7 @@ body {
     border: 2px solid black;
     margin: 10px;
     padding: 5px;
-    background-image: url("blueGreen.jpg"), linear-gradient(
+    background-image: url("../images/blueGreen.jpg"), linear-gradient(
         rgb(238, 236, 236), 
         rgb(231, 231, 231)
       );
@@ -179,7 +179,7 @@ body {
     border: 2px solid black;
     margin: 10px;
     padding: 5px;
-    background-image: url("yellow.jpg");
+    background-image: url("../images/yellow.jpg");
 }
 
 #quit {
@@ -187,7 +187,7 @@ body {
     border: 2px solid black;
     margin: 10px;
     padding: 5px;
-    background: url("pink.jpg");
+    background: url("../images/pink.jpg");
 }
 #buttons {
 display: flex;
@@ -229,7 +229,7 @@ flex-direction: column;
     border: 2px solid black;
     margin: 10px;
     padding: 5px;
-    background-image: url("blueGreen.jpg"), linear-gradient(
+    background-image: url("../images/blueGreen.jpg"), linear-gradient(
         rgb(238, 236, 236), 
         rgb(231, 231, 231)
       );
@@ -265,7 +265,7 @@ margin:1px;
     -webkit-text-stroke: 1px black;
     background-color: #17a2b8;
     border-color: #17a2b8;
-    background-image: url("blueGreen.jpg"), linear-gradient(
+    background-image: url("../images/blueGreen.jpg"), linear-gradient(
         rgb(238, 236, 236), 
         rgb(231, 231, 231)
       );
@@ -279,14 +279,14 @@ margin:1px;
     color: black;
     background-color: #17a2b8;
     border-color: #17a2b8;
-    background-image: url("blueGreen.jpg"), linear-gradient(
+    background-image: url("../images/blueGreen.jpg"), linear-gradient(
         rgb(238, 236, 236), 
         rgb(231, 231, 231)
       );
 }
 
 #guessBtn {
-    background-image: url("beige.jpg")
+    background-image: url("../images/beige.jpg")
 }
 
 

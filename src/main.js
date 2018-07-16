@@ -152,14 +152,14 @@ var map = L.map("map", {
 map.dragging.disable()
 
 var carmenIcon = L.icon({
-    iconUrl: './carmenOldSchool.png',
-    iconSize: [30, 52.5],
-    iconAnchor: [15, 52.5],
-    popupAnchor: [0, -52.5]
+    iconUrl: './images/ethanAllen.png',
+    iconSize: [56, 46.51],
+    iconAnchor: [14, 46.51],
+    popupAnchor: [0, -46.51]
 });
 
 var breadIcon = L.icon({
-    iconUrl: './breadCrmb.png',
+    iconUrl: './images/breadCrmb.png',
     iconSize: [50, 41.52],
     iconAnchor: [25, 41.52]
 });
