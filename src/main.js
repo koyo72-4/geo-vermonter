@@ -425,7 +425,19 @@ function addNewScore(name) {
     }
 
     let scoreList = JSON.parse(localStorage.getItem('scoreJSON'));
-    scoreList.push({ "Name": "'" + name + "'", "Score": score, "Date": Date() })
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+
+    var yyyy = today.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd;
+    }
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+    var today = mm + '/' + dd + '/' + yyyy;
+    scoreList.push({ "Name": "'" + name + "'", "Score": score, "Date": today })
 
     localStorage.setItem('scoreJSON', JSON.stringify(scoreList));
 
@@ -435,8 +447,6 @@ function addNewScore(name) {
 
 function loadHighScoreBoard() {
     let scoreList = JSON.parse(localStorage.getItem('scoreJSON'));
-
-
 
     scoreList.sort((first, second) => {
         if (first.Score > second.Score) {
@@ -461,7 +471,6 @@ function loadHighScoreBoard() {
     $("#youWon").css("display", "none")
     $("#guessTown").css("display", "none")
     $("#scoreContainer").css("display", "block")
-
 
 }
 
