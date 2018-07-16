@@ -412,6 +412,39 @@ function winTest(clickedCounty) {
     }
 }
 
+$("#addScore").on('click', function () {
+
+    addNewScore(document.getElementById("userName").value);
+});
+
+
+function addNewScore(name) {
+    console.log(name)
+    scoreJSON = localStorage.getItem("scoreJSON")
+    if (scoreJSON === null) {
+        console.log("ITS NULL. LETS MAKE ONE")
+
+        var newJSON = {
+            
+                1: { "Name": name, "Score": score, "Date": Date() }
+            
+        }
+        localStorage.setItem('scoreJSON',JSON.stringify(newJSON))
+
+    }
+    else {
+        
+        JSON.parse(scoreJSON)
+
+        
+        
+        console.log(Object.keys(scoreJSON).length)
+
+    }
+
+
+}
+
 function endGame() {
     gameState = "over";
     var highscore = localStorage.getItem("highscore");
