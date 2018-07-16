@@ -65,7 +65,7 @@ body {
  }
 
  #northeast, #southeast, #southwest, #northwest {
-    color: #62a354;
+    color: green;
  }
 
  #northeast i {
