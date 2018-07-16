@@ -22,6 +22,38 @@ let countyNumbers = {
     Bennington: 3
 }
 
+var map = L.map("map", {
+    center: [44.050254, -72.575367],
+    zoom: openZoom,
+    fadeAnimation: true,
+    zoomAnimation: true
+});
+
+
+var carmenIcon = L.icon({
+    iconUrl: './images/ethanAllen.png',
+    iconSize: [56, 46.51],
+    iconAnchor: [14, 46.51],
+    popupAnchor: [0, -46.51]
+});
+
+var breadIcon = L.icon({
+    iconUrl: './images/breadCrmb.png',
+    iconSize: [50, 41.52],
+    iconAnchor: [25, 41.52]
+});
+
+let startLat, startLon;
+let currLat, currLon;
+let correctCounty;
+let correctTown;
+let selectedTown;
+
+let score = 1000;
+
+let currentZoom
+let gameZoom = 15
+let openZoom = 7
 let marker
 let markerBread
 
@@ -33,7 +65,19 @@ startButton.addEventListener('click', startGame);
 let latitude = document.getElementById("latitude");
 let latVal = document.getElementById("latVal");
 let longitude = document.getElementById("longitude");
+let fullStateLayer = L.geoJson(border_data);
 
+map.dragging.disable()
+fullStateLayer.addTo(map)
+map.dragging.disable();
+map.touchZoom.disable();
+map.doubleClickZoom.disable();
+map.scrollWheelZoom.disable();
+map.boxZoom.disable();
+map.keyboard.disable();
+if (map.tap) map.tap.disable();
+
+document.getElementById('map').style.cursor = 'default';
 document.getElementById('guessTown').style.display = 'none';
 
 
@@ -74,70 +118,11 @@ $("#zoomOut").on('click', function () {
     zoom("out");
 });
 
-
-let startLat, startLon;
-let currLat, currLon;
-let correctCounty;
-let correctTown;
-let selectedTown;
-
-let score = 1000;
-
-
-// var map = L.map('map').setView([44.050254, -72.575367], 7);
-
-let currentZoom
-let gameZoom = 15
-let openZoom = 7
-
-var map = L.map("map", {
-    center: [44.050254, -72.575367],
-    zoom: openZoom,
-    fadeAnimation: true,
-    zoomAnimation: true
-});
-
-map.dragging.disable()
-
-var carmenIcon = L.icon({
-    iconUrl: './images/ethanAllen.png',
-    iconSize: [56, 46.51],
-    iconAnchor: [14, 46.51],
-    popupAnchor: [0, -46.51]
-});
-
-var breadIcon = L.icon({
-    iconUrl: './images/breadCrmb.png',
-    iconSize: [50, 41.52],
-    iconAnchor: [25, 41.52]
-});
-
-
 var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     // attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 });
 
 Esri_WorldImagery.addTo(map)
-
-// L.marker([44.260254, -72.575367]).addTo(map)
-//     .bindPopup('Monteplier, VT.')
-//     .openPopup();
-
-let fullStateLayer = L.geoJson(border_data);
-
-fullStateLayer.addTo(map)
-map.dragging.disable();
-map.touchZoom.disable();
-map.doubleClickZoom.disable();
-map.scrollWheelZoom.disable();
-map.boxZoom.disable();
-map.keyboard.disable();
-if (map.tap) map.tap.disable();
-document.getElementById('map').style.cursor = 'default';
-
-
-
-
 
 $("#north").on('click', function () {
     travel("north");
@@ -175,34 +160,23 @@ $("#center").on('click', function () {
     travel("home");
 });
 
-
-
-
-
 function startGame() {
 
     if (marker != undefined) {
         marker.remove();
     }
-
-
     startButton.disabled = true;
     quit.disabled = false;
     guess.disabled = false;
 
     latVal.textContent = "?"
-
     longVal.textContent = "?"
-
     countyVal.textContent = "?"
-
     townVal.textContent = "?"
-
     score = 1000
+
     $("#scoreVal").text(score);
-
     getRandomLat(VTboundingBox["minLat"], VTboundingBox["maxLat"])
-
     getRandomLon(VTboundingBox["minLon"], VTboundingBox["maxLon"])
 
     pipTest(startLat, startLon);
@@ -219,7 +193,6 @@ function getTown(lat, lon) {
 }
 
 function pipTest(lat, lon) {
-
     let layer = L.geoJson(border_data);
     let results = leafletPip.pointInLayer([lon, lat], layer);
 
@@ -238,7 +211,13 @@ function setStartPoint() {
 
     fullStateLayer.remove();
     currentZoom = gameZoom
+    marker = L.marker([startLat, startLon], { icon: carmenIcon });
+    currLat = startLat
+    currLon = startLon
+    marker.addTo(map);
+    marker.bindPopup("Where am I?").openPopup();
 
+    gameState = "playing"
     map.setView([startLat, startLon], currentZoom, {
         pan: {
             animate: true,
@@ -248,18 +227,6 @@ function setStartPoint() {
             animate: true
         }
     });
-
-
-
-
-    marker = L.marker([startLat, startLon], { icon: carmenIcon });
-    currLat = startLat
-    currLon = startLon
-    marker.addTo(map);
-    marker.bindPopup("Where am I?").openPopup();
-
-    gameState = "playing"
-
 
     fetch('https://nominatim.openstreetmap.org/reverse?lat=' + startLat + '&lon=' + startLon + '&format=json')
         .then(function (response) {
@@ -271,10 +238,7 @@ function setStartPoint() {
             return jsonResponse
         })
 
-
-
     enableZoomDirCountyButtons()
-
 
 }
 
@@ -380,7 +344,6 @@ function changeScore(pointDifference) {
 function winTest(clickedCounty) {
     if (clickedCounty === correctCounty) {
         $("#guessBtn").css("display", "none")
-
         $("#youWon").text("YOU WON!!!")
         $("#youWon").css("display", "block")
         document.getElementById('guessTown').style.display = 'block';
@@ -451,7 +414,6 @@ function winTest(clickedCounty) {
 
 function endGame() {
     gameState = "over";
-
     var highscore = localStorage.getItem("highscore");
 
     if (highscore !== null) {
