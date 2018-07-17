@@ -203,7 +203,7 @@ function pipTest(lat, lon) {
 
 function setStartPoint() {
 
-    fullStateLayer.remove();
+    // fullStateLayer.remove();
     currentZoom = gameZoom
     marker = L.marker([startLat, startLon], { icon: carmenIcon });
     currLat = startLat

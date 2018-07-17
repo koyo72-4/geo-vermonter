@@ -87,14 +87,29 @@ body {
  #tinyEthan {
      width: 20px;
      height:auto;
+     margin:0px;
  }
+#home {
+    padding:2px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
 
 
 
-/* #navBtns a {
-    background-image: url("pink.jpg");
-    border: solid 1px black;
-} */
+.table-striped, .table, tr {
+
+    margin: auto;
+     width: 50% !important; 
+}
+
+modalTitle {
+    text-align: center;
+}
+
+
+
 
 #direction-buttons {
     display: flex;
@@ -161,6 +176,9 @@ body {
 
 #longVal, #latVal, #countyVal, #townVal {
     font-weight: normal;
+}
+.leaflet-interactive{
+    fill:none;
 }
 
 #start{
