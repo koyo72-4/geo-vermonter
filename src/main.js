@@ -86,6 +86,7 @@ $("#myModal").on('hidden.bs.modal', function () {
     $("#scoreContainer").css("display", "none")
     document.getElementById('guessTown').style.display = 'none';
     $("#guessBtn").css("display", "block")
+    $("#modalTitle").html("Where in Vermont is Ethan Allen?")
 });
 
 guessBtnListen()
@@ -140,6 +141,16 @@ function initiateDirectionButtons() {
             travel($(event.target).parent()[0].id);
         }
     });
+}
+
+
+initiateNavButtons()
+function initiateNavButtons() {
+$("#highScores").on('click', function () {
+
+    loadHighScoreBoard()
+    
+});
 }
 
 
@@ -442,6 +453,9 @@ function loadHighScoreBoard() {
 
     localStorage.setItem('scoreJSON', JSON.stringify(scoreList))
 
+    $("#scoreTable").empty()
+    $("#modalTitle").html("High Score Board...")
+    
     for (i = 0; i < scoreList.length; i++) {
         $("#scoreTable").append("<tr>")
         $("#scoreTable").append("<td>" + scoreList[i].Name + "</td>");
@@ -452,6 +466,7 @@ function loadHighScoreBoard() {
 
     $("#youWon").css("display", "none")
     $("#guessTown").css("display", "none")
+    $("#guessBtn").css("display", "none")
     $("#scoreContainer").css("display", "block")
 
 }

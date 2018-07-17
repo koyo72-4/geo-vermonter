@@ -27,7 +27,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
-                        <h4 class="modal-title">What county is Ethan Allen?</h4>
+                        <h4 id = "modalTitle" class="modal-title">Where in Vermont is Ethan Allen?</h4>
                     </div>
                     <div id="guessBtn" class="modal-body">
                         <p>Select a County...</p>
@@ -95,11 +95,14 @@
         <div class="row">
             <nav class="navbar col-sm-3">
                 <ul id="navBtns" class="nav flex-column nav-pills">
+                    <div id="ethanBox">
+                        <img id= "ethanCorner" src = "./images/ethanAllen.png">
+                    </div>
                     <li class="nav-item">
                         <a class="nav-link active" href="#">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">High Score</a>
+                        <a class="nav-link active" id = "highScores" href="#" disabled data-toggle="modal" data-target="#myModal">High Scores</a>
                     </li>
                     <img id="VTmap" src="./images/vtMap.png">
                 </ul>
