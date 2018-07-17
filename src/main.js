@@ -93,10 +93,36 @@ function initize() {
     document.getElementById('map').style.cursor = 'default';
     document.getElementById('guessTown').style.display = 'none';
     $("#scoreContainer").css("display", "none")
+    $("#myModal").on('hidden.bs.modal', function () {
+        $("#youWon").css("display", "none")
+        $("#scoreContainer").css("display", "none")
+        document.getElementById('guessTown').style.display = 'none';
+        $("#guessBtn").css("display", "block")
+        $("#modalTitle").html("Where in Vermont is Ethan Allen?")
+    });
 
+    $("#quit").on('click', function () {
+        $("#countyVal").text(correctCounty)
+        $("#townVal").html(correctTown)
+        $("#latVal").text(startLat.toFixed(4))
+        $("#longVal").text(startLon.toFixed(4))
+
+        startButton.disabled = false;
+        quit.disabled = true;
+        guess.disabled = true;
+    });
+
+    $("#zoomIn").on('click', function () {
+        zoom("in");
+    });
+
+    $("#zoomOut").on('click', function () {
+        zoom("out");
+    });
 
     activateCountyBtnListeners()
     initiateDirectionButtons()
+    initiateNavButtons()
 
 }
 
@@ -112,32 +138,7 @@ function activateCountyBtnListeners() {
     });
 }
 
-$("#myModal").on('hidden.bs.modal', function () {
-    $("#youWon").css("display", "none")
-    $("#scoreContainer").css("display", "none")
-    document.getElementById('guessTown').style.display = 'none';
-    $("#guessBtn").css("display", "block")
-    $("#modalTitle").html("Where in Vermont is Ethan Allen?")
-});
 
-$("#quit").on('click', function () {
-    $("#countyVal").text(correctCounty)
-    $("#townVal").html(correctTown)
-    $("#latVal").text(startLat.toFixed(4))
-    $("#longVal").text(startLon.toFixed(4))
-
-    startButton.disabled = false;
-    quit.disabled = true;
-    guess.disabled = true;
-});
-
-$("#zoomIn").on('click', function () {
-    zoom("in");
-});
-
-$("#zoomOut").on('click', function () {
-    zoom("out");
-});
 
 
 function initiateDirectionButtons() {
@@ -152,7 +153,7 @@ function initiateDirectionButtons() {
 }
 
 
-initiateNavButtons()
+
 function initiateNavButtons() {
     $("#highScores").on('click', function () {
 
