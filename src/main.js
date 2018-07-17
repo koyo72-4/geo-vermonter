@@ -88,15 +88,19 @@ $("#myModal").on('hidden.bs.modal', function () {
     $("#guessBtn").css("display", "block")
 });
 
-$("#guessBtn").on('click', function () {
+guessBtnListen()
 
-    if (event.target.tagName === "BUTTON") {
-        let clickedCounty = event.target.id
-        event.target.disabled = true
-        winTest(clickedCounty)
-    }
+function guessBtnListen() {
+    $("#guessBtn").on('click', function () {
 
-});
+        if (event.target.tagName === "BUTTON") {
+            let clickedCounty = event.target.id
+            event.target.disabled = true
+            winTest(clickedCounty)
+        }
+
+    });
+}
 
 $("#quit").on('click', function () {
 
@@ -125,41 +129,19 @@ var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest
 
 Esri_WorldImagery.addTo(map)
 
-$("#north").on('click', function () {
-    travel("north");
-});
 
-$("#west").on('click', function () {
-    travel("west");
-});
+initiateDirectionButtons()
+function initiateDirectionButtons() {
+    $("#direction-buttons").on('click', function () {
+        if (event.target.tagName === "BUTTON") {
+            travel(event.target.id);
+        }
+        if (event.target.tagName === "I" || event.target.tagName === "IMG") {
+            travel($(event.target).parent()[0].id);
+        }
+    });
+}
 
-$("#east").on('click', function () {
-    travel("east");
-});
-
-$("#south").on('click', function () {
-    travel("south");
-});
-
-$("#southeast").on('click', function () {
-    travel("southeast");
-});
-
-$("#southwest").on('click', function () {
-    travel("southwest");
-});
-
-$("#northeast").on('click', function () {
-    travel("northeast");
-});
-
-$("#northwest").on('click', function () {
-    travel("northwest");
-});
-
-$("#center").on('click', function () {
-    travel("home");
-});
 
 function startGame() {
 
@@ -428,8 +410,8 @@ function addNewScore(name) {
     var today = new Date();
     var dd = today.getDate();
     var mm = today.getMonth() + 1; //January is 0!
-
     var yyyy = today.getFullYear();
+
     if (dd < 10) {
         dd = '0' + dd;
     }
