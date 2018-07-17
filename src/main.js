@@ -46,49 +46,11 @@ const countyNumbers = {
 function initize() {
 
     score = 1000;
-    gameZoom = 15
-    openZoom = 7
-
-    map = L.map("map", {
-        center: [44.050254, -72.575367],
-        zoom: openZoom,
-        fadeAnimation: true,
-        zoomAnimation: true
-    });
-
-    let Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        // attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-    });
-
-    Esri_WorldImagery.addTo(map)
-
-    ethanIcon = L.icon({
-        iconUrl: './images/ethanAllen.png',
-        iconSize: [56, 46.51],
-        iconAnchor: [14, 46.51],
-        popupAnchor: [0, -46.51]
-    });
-
-    breadIcon = L.icon({
-        iconUrl: './images/breadCrmb.png',
-        iconSize: [50, 41.52],
-        iconAnchor: [25, 41.52]
-    });
+    
+    initizeMap();
 
     startButton = document.getElementById("start");
     startButton.addEventListener('click', startGame);
-
-    let fullStateLayer = L.geoJson(border_data);
-
-    map.dragging.disable()
-    fullStateLayer.addTo(map)
-    map.dragging.disable();
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-    map.boxZoom.disable();
-    map.keyboard.disable();
-    if (map.tap) map.tap.disable();
 
     document.getElementById('map').style.cursor = 'default';
     document.getElementById('guessTown').style.display = 'none';
@@ -124,6 +86,43 @@ function initize() {
     initiateDirectionButtons()
     initiateNavButtons()
 
+}
+
+function initizeMap() {
+    gameZoom = 15;
+    openZoom = 7;
+    map = L.map("map", {
+        center: [44.050254, -72.575367],
+        zoom: openZoom,
+        fadeAnimation: true,
+        zoomAnimation: true
+    });
+    let Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        // attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
+    Esri_WorldImagery.addTo(map);
+    ethanIcon = L.icon({
+        iconUrl: './images/ethanAllen.png',
+        iconSize: [56, 46.51],
+        iconAnchor: [14, 46.51],
+        popupAnchor: [0, -46.51]
+    });
+    breadIcon = L.icon({
+        iconUrl: './images/breadCrmb.png',
+        iconSize: [50, 41.52],
+        iconAnchor: [25, 41.52]
+    });
+    let fullStateLayer = L.geoJson(border_data);
+    map.dragging.disable();
+    fullStateLayer.addTo(map);
+    map.dragging.disable();
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+    map.boxZoom.disable();
+    map.keyboard.disable();
+    if (map.tap)
+        map.tap.disable();
 }
 
 function activateCountyBtnListeners() {
