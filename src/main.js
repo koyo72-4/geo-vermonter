@@ -14,7 +14,6 @@ let openZoom
 let marker
 let markerBread
 
-let startButton
 
 let gameState
 let score
@@ -43,55 +42,63 @@ const countyNumbers = {
     Bennington: 3
 }
 
+let elements;
+
 function initize() {
 
     score = 1000;
     
     initizeMap();
 
-    startButton = document.getElementById("start");
-    startButton.addEventListener('click', startGame);
+    elements = {
+        startButton: document.getElementById("start"),
+        map: document.getElementById('map')
+    };
 
-    document.getElementById('map').style.cursor = 'default';
+    elements.startButton.addEventListener('click', startGame);
+
+    elements.map.style.cursor = 'default';
     document.getElementById('guessTown').style.display = 'none';
     $("#scoreContainer").css("display", "none")
-    $("#myModal").on('hidden.bs.modal', function () {
-        $("#youWon").css("display", "none")
-        $("#scoreContainer").css("display", "none")
-        document.getElementById('guessTown').style.display = 'none';
-        $("#guessBtn").css("display", "block")
-        $("#modalTitle").html("Where in Vermont is Ethan Allen?")
-    });
 
-    $("#quit").on('click', function () {
-        $("#countyVal").text(correctCounty)
-        $("#townVal").html(correctTown)
-        $("#latVal").text(startLat.toFixed(4))
-        $("#longVal").text(startLon.toFixed(4))
-
-        startButton.disabled = false;
-        quit.disabled = true;
-        guess.disabled = true;
-    });
-
-    $("#zoomIn").on('click', function () {
-        zoom("in");
-    });
-
-    $("#zoomOut").on('click', function () {
-        zoom("out");
-    });
-
+    addEventHandlers();
     activateCountyBtnListeners()
     initiateDirectionButtons()
     initiateNavButtons()
+}
 
+function addEventHandlers() {
+    $("#myModal").on('hidden.bs.modal', function () {
+        $("#youWon").css("display", "none");
+        $("#scoreContainer").css("display", "none");
+        document.getElementById('guessTown').style.display = 'none';
+        $("#guessBtn").css("display", "block");
+        $("#modalTitle").html("Where in Vermont is Ethan Allen?");
+    });
+    $("#quit").on('click', function () {
+        $("#countyVal").text(correctCounty);
+        $("#townVal").html(correctTown);
+        $("#latVal").text(startLat.toFixed(4));
+        $("#longVal").text(startLon.toFixed(4));
+        elements.startButton.disabled = false;
+        quit.disabled = true;
+        guess.disabled = true;
+    });
+    $("#zoomIn").on('click', function () {
+        zoom("in");
+    });
+    $("#zoomOut").on('click', function () {
+        zoom("out");
+    });
+    $("#addScore").on('click', function () {
+        addNewScore(document.getElementById("userName").value);
+    });
 }
 
 function initizeMap() {
     gameZoom = 15;
     openZoom = 7;
-    map = L.map("map", {
+    let map = L.map("map", {
         center: [44.050254, -72.575367],
         zoom: openZoom,
         fadeAnimation: true,
@@ -137,9 +144,6 @@ function activateCountyBtnListeners() {
     });
 }
 
-
-
-
 function initiateDirectionButtons() {
     $("#direction-buttons").on('click', function () {
         if (event.target.tagName === "BUTTON") {
@@ -151,8 +155,6 @@ function initiateDirectionButtons() {
     });
 }
 
-
-
 function initiateNavButtons() {
     $("#highScores").on('click', function () {
 
@@ -161,13 +163,12 @@ function initiateNavButtons() {
     });
 }
 
-
 function startGame() {
 
     if (marker != undefined) {
         marker.remove();
     }
-    startButton.disabled = true;
+    elements.startButton.disabled = true;
     quit.disabled = false;
     guess.disabled = false;
 
@@ -205,11 +206,11 @@ function pipTest(lat, lon) {
 
         pipTest(startLat, startLon);
     } else {
-        setStartPoint()
+        setStartPoint(map)
     }
 }
 
-function setStartPoint() {
+function setStartPoint(map) {
     currentZoom = gameZoom
     marker = L.marker([startLat, startLon], { icon: ethanIcon });
     currLat = startLat
@@ -269,7 +270,6 @@ function enableZoomDirCountyButtons() {
         $(this).prop('disabled', false)
     })
 }
-
 
 function getRandomLat(min, max) {
     startLat = Math.random() * (max - min) + min; //The maximum is inclusive and the minimum is inclusive
@@ -412,12 +412,6 @@ function winTest(clickedCounty) {
     }
 }
 
-$("#addScore").on('click', function () {
-
-    addNewScore(document.getElementById("userName").value);
-});
-
-
 function addNewScore(name) {
     if (!localStorage.getItem('scoreJSON')) {
         localStorage.setItem('scoreJSON', '[]')
@@ -477,7 +471,6 @@ function loadHighScoreBoard() {
 
 }
 
-
 function endGame() {
     gameState = "over";
     var highscore = localStorage.getItem("highscore");
@@ -492,9 +485,7 @@ function endGame() {
         localStorage.setItem("highscore", score);
     }
 
-    startButton.disabled = false;
+    elements.startButton.disabled = false;
     quit.disabled = true;
     guess.disabled = true;
 }
-
-
