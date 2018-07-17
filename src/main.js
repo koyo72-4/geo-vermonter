@@ -1,27 +1,32 @@
 let startLat, startLon;
 let currLat, currLon;
+
 let correctCounty;
 let correctTown;
 let selectedTown;
 
+let map
+let ethanIcon
+let breadIcon
 let currentZoom
+let gameZoom
+let openZoom
 let marker
 let markerBread
 
+let startButton
+
 let gameState
-let score = 1000;
+let score
 
-let gameZoom = 15
-let openZoom = 7
-
-let VTboundingBox = {
+const VTboundingBox = {
     maxLon: -73.3654,
     minLon: -71.5489,
     maxLat: 45.0065,
     minLat: 42.7395
 };
 
-let countyNumbers = {
+const countyNumbers = {
     Franklin: 11,
     'Grand Isle': 13,
     Orleans: 19,
@@ -38,60 +43,64 @@ let countyNumbers = {
     Bennington: 3
 }
 
-var map = L.map("map", {
-    center: [44.050254, -72.575367],
-    zoom: openZoom,
-    fadeAnimation: true,
-    zoomAnimation: true
-});
+function initize() {
 
+    score = 1000;
+    gameZoom = 15
+    openZoom = 7
 
-var carmenIcon = L.icon({
-    iconUrl: './images/ethanAllen.png',
-    iconSize: [56, 46.51],
-    iconAnchor: [14, 46.51],
-    popupAnchor: [0, -46.51]
-});
+    map = L.map("map", {
+        center: [44.050254, -72.575367],
+        zoom: openZoom,
+        fadeAnimation: true,
+        zoomAnimation: true
+    });
 
-var breadIcon = L.icon({
-    iconUrl: './images/breadCrmb.png',
-    iconSize: [50, 41.52],
-    iconAnchor: [25, 41.52]
-});
+    let Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        // attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
 
-let startButton = document.getElementById("start");
-startButton.addEventListener('click', startGame);
+    Esri_WorldImagery.addTo(map)
 
-let latitude = document.getElementById("latitude");
-let latVal = document.getElementById("latVal");
-let longitude = document.getElementById("longitude");
-let fullStateLayer = L.geoJson(border_data);
+    ethanIcon = L.icon({
+        iconUrl: './images/ethanAllen.png',
+        iconSize: [56, 46.51],
+        iconAnchor: [14, 46.51],
+        popupAnchor: [0, -46.51]
+    });
 
-map.dragging.disable()
-fullStateLayer.addTo(map)
-map.dragging.disable();
-map.touchZoom.disable();
-map.doubleClickZoom.disable();
-map.scrollWheelZoom.disable();
-map.boxZoom.disable();
-map.keyboard.disable();
-if (map.tap) map.tap.disable();
+    breadIcon = L.icon({
+        iconUrl: './images/breadCrmb.png',
+        iconSize: [50, 41.52],
+        iconAnchor: [25, 41.52]
+    });
 
-document.getElementById('map').style.cursor = 'default';
-document.getElementById('guessTown').style.display = 'none';
-$("#scoreContainer").css("display", "none")
+    startButton = document.getElementById("start");
+    startButton.addEventListener('click', startGame);
 
-$("#myModal").on('hidden.bs.modal', function () {
-    $("#youWon").css("display", "none")
-    $("#scoreContainer").css("display", "none")
+    let fullStateLayer = L.geoJson(border_data);
+
+    map.dragging.disable()
+    fullStateLayer.addTo(map)
+    map.dragging.disable();
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+    map.boxZoom.disable();
+    map.keyboard.disable();
+    if (map.tap) map.tap.disable();
+
+    document.getElementById('map').style.cursor = 'default';
     document.getElementById('guessTown').style.display = 'none';
-    $("#guessBtn").css("display", "block")
-    $("#modalTitle").html("Where in Vermont is Ethan Allen?")
-});
+    $("#scoreContainer").css("display", "none")
 
-guessBtnListen()
 
-function guessBtnListen() {
+    activateCountyBtnListeners()
+    initiateDirectionButtons()
+
+}
+
+function activateCountyBtnListeners() {
     $("#guessBtn").on('click', function () {
 
         if (event.target.tagName === "BUTTON") {
@@ -103,9 +112,15 @@ function guessBtnListen() {
     });
 }
 
+$("#myModal").on('hidden.bs.modal', function () {
+    $("#youWon").css("display", "none")
+    $("#scoreContainer").css("display", "none")
+    document.getElementById('guessTown').style.display = 'none';
+    $("#guessBtn").css("display", "block")
+    $("#modalTitle").html("Where in Vermont is Ethan Allen?")
+});
+
 $("#quit").on('click', function () {
-
-
     $("#countyVal").text(correctCounty)
     $("#townVal").html(correctTown)
     $("#latVal").text(startLat.toFixed(4))
@@ -124,14 +139,7 @@ $("#zoomOut").on('click', function () {
     zoom("out");
 });
 
-var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    // attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-});
 
-Esri_WorldImagery.addTo(map)
-
-
-initiateDirectionButtons()
 function initiateDirectionButtons() {
     $("#direction-buttons").on('click', function () {
         if (event.target.tagName === "BUTTON") {
@@ -146,11 +154,11 @@ function initiateDirectionButtons() {
 
 initiateNavButtons()
 function initiateNavButtons() {
-$("#highScores").on('click', function () {
+    $("#highScores").on('click', function () {
 
-    loadHighScoreBoard()
-    
-});
+        loadHighScoreBoard()
+
+    });
 }
 
 
@@ -202,10 +210,8 @@ function pipTest(lat, lon) {
 }
 
 function setStartPoint() {
-
-    // fullStateLayer.remove();
     currentZoom = gameZoom
-    marker = L.marker([startLat, startLon], { icon: carmenIcon });
+    marker = L.marker([startLat, startLon], { icon: ethanIcon });
     currLat = startLat
     currLon = startLon
     marker.addTo(map);
@@ -455,7 +461,7 @@ function loadHighScoreBoard() {
 
     $("#scoreTable").empty()
     $("#modalTitle").html("High Score Board...")
-    
+
     for (i = 0; i < scoreList.length; i++) {
         $("#scoreTable").append("<tr>")
         $("#scoreTable").append("<td>" + scoreList[i].Name + "</td>");
