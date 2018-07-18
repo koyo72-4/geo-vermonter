@@ -440,13 +440,12 @@ function winTest(clickedCounty) {
                 changeScore(500);
                 console.log('score:', score);
                 $("#townVal").html(correctTown);
-                endGame();
             } else {
                 $('#townAnswer').text('Sorry. The town was ' + correctTown + '. But great job getting the county!');
                 $("#townVal").html(correctTown);
                 $("#townVal").html(correctTown);
-                endGame();
             }
+            elements.startButton.disabled = false;
         });
     }
 
@@ -482,6 +481,7 @@ function addNewScore(name) {
     scorePosted = true
 
     loadHighScoreBoard()
+    endGame();
 }
 
 function loadHighScoreBoard() {
@@ -528,19 +528,18 @@ function loadAbout() {
 
 function endGame() {
     gameState = "over";
-    var highscore = localStorage.getItem("highscore");
+    // var highscore = localStorage.getItem("highscore");
 
-    if (highscore !== null) {
-        if (score > highscore) {
-            alert("You beat the high score which was " + highscore)
-            localStorage.setItem("highscore", score);
-        }
-    }
-    else {
-        localStorage.setItem("highscore", score);
-    }
-
+    // if (highscore !== null) {
+    //     if (score > highscore) {
+    //         alert("You beat the high score which was " + highscore)
+    //         localStorage.setItem("highscore", score);
+    //     }
+    // }
+    // else {
+    //     localStorage.setItem("highscore", score);
+    // }
+    $("#quit").prop("disabled", true)
+    $("#guess").prop("disabled", true)
     elements.startButton.disabled = false;
-    quit.disabled = true;
-    guess.disabled = true;
 }
