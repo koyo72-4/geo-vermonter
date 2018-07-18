@@ -16,6 +16,9 @@ let markerBread
 
 
 let gameState
+let countyWin
+let townSelected = false
+let scorePosted = false
 let score
 
 const VTboundingBox = {
@@ -47,7 +50,7 @@ let elements;
 function initize() {
 
     score = 1000;
-    
+
     initizeMap();
 
     elements = {
@@ -71,8 +74,9 @@ function addEventHandlers() {
     $("#myModal").on('hidden.bs.modal', function () {
         $("#youWon").css("display", "none");
         $("#scoreContainer").css("display", "none");
+        $("#aboutContainer").css("display", "none")
         document.getElementById('guessTown').style.display = 'none';
-        $("#guessBtn").css("display", "block");
+        $("#guessDiv").css("display", "block");
         $("#modalTitle").html("Where in Vermont is Ethan Allen?");
     });
     $("#quit").on('click', function () {
@@ -81,8 +85,34 @@ function addEventHandlers() {
         $("#latVal").text(startLat.toFixed(4));
         $("#longVal").text(startLon.toFixed(4));
         elements.startButton.disabled = false;
-        quit.disabled = true;
-        guess.disabled = true;
+        $("#quit").prop("disabled", true)
+        $("#guess").prop("disabled", true)
+    });
+
+    $("#guess").on('click', function () {
+
+        if (gameState === "over") {
+            $("#youWon").css("display", "none");
+            $("#scoreContainer").css("display", "none");
+            $("#aboutContainer").css("display", "none")
+            $("#guessTown").css("display", "none")
+            $("#guessDiv").css("display", "block")
+        }
+        if (countyWin === true) {
+            $("#youWon").css("display", "block");
+            $("#scoreContainer").css("display", "none");
+            $("#aboutContainer").css("display", "none")
+            $("#guessTown").css("display", "block")
+            $("#guessDiv").css("display", "none")
+        }
+        if (gamstate = "playing" && countyWin != true) {
+            $("#youWon").css("display", "none");
+            $("#scoreContainer").css("display", "none");
+            $("#aboutContainer").css("display", "none")
+            $("#guessTown").css("display", "none")
+            $("#guessDiv").css("display", "block")
+        }
+
     });
     $("#zoomIn").on('click', function () {
         zoom("in");
@@ -98,7 +128,7 @@ function addEventHandlers() {
 function initizeMap() {
     gameZoom = 15;
     openZoom = 7;
-    let map = L.map("map", {
+    map = L.map("map", {
         center: [44.050254, -72.575367],
         zoom: openZoom,
         fadeAnimation: true,
@@ -133,7 +163,7 @@ function initizeMap() {
 }
 
 function activateCountyBtnListeners() {
-    $("#guessBtn").on('click', function () {
+    $("#guessDiv").on('click', function () {
 
         if (event.target.tagName === "BUTTON") {
             let clickedCounty = event.target.id
@@ -157,9 +187,11 @@ function initiateDirectionButtons() {
 
 function initiateNavButtons() {
     $("#highScores").on('click', function () {
-
         loadHighScoreBoard()
+    });
 
+    $("#aboutBtn").on('click', function () {
+        loadAbout()
     });
 }
 
@@ -169,8 +201,8 @@ function startGame() {
         marker.remove();
     }
     elements.startButton.disabled = true;
-    quit.disabled = false;
-    guess.disabled = false;
+    $("#quit").prop("disabled", false)
+    $("#guess").prop("disabled", false)
 
     latVal.textContent = "?"
     longVal.textContent = "?"
@@ -182,6 +214,7 @@ function startGame() {
     getRandomLat(VTboundingBox["minLat"], VTboundingBox["maxLat"])
     getRandomLon(VTboundingBox["minLon"], VTboundingBox["maxLon"])
 
+    console.log(startLat, startLon)
     pipTest(startLat, startLon);
     correctTown = getTown(startLat, startLon);
 }
@@ -219,6 +252,10 @@ function setStartPoint(map) {
     marker.bindPopup("Where am I?").openPopup();
 
     gameState = "playing"
+    townSelected = false
+    scorePosted = false
+    countyWin = false
+
     map.setView([startLat, startLon], currentZoom, {
         pan: {
             animate: true,
@@ -250,7 +287,7 @@ function zoom(way) {
     }
     else {
         currentZoom += -1
-        changeScore(-50)
+        changeScore(-150)
     }
     map.setZoom(currentZoom)
 
@@ -266,8 +303,15 @@ function enableZoomDirCountyButtons() {
         $(this).prop('disabled', false)
     })
 
-    $("#guessBtn button").each(function (index) {
+    $("#guessDiv button").each(function (index) {
         $(this).prop('disabled', false)
+    })
+}
+
+function disableCountyButtons() {
+
+    $("#guessDiv button").each(function (index) {
+        $(this).prop('disabled', true)
     })
 }
 
@@ -343,7 +387,9 @@ function changeScore(pointDifference) {
 
 function winTest(clickedCounty) {
     if (clickedCounty === correctCounty) {
-        $("#guessBtn").css("display", "none")
+        disableCountyButtons()
+        countyWin = true
+        $("#guessDiv").css("display", "none")
         $("#youWon").text("YOU WON!!!")
         $("#youWon").css("display", "block")
         document.getElementById('guessTown').style.display = 'block';
@@ -385,7 +431,7 @@ function winTest(clickedCounty) {
 
         $('#townsList').on('change', function (event) {
             selectedTown = event.target.value;
-            console.log('selectedTown: ' + '"' + selectedTown + '"');
+            townSelected = true
         });
 
         $('#townSubmit').one('click', function () {
@@ -407,7 +453,7 @@ function winTest(clickedCounty) {
     else {
         changeScore(-150)
         $("#youWon").css("display", "block")
-        $("#guessBtn").css("display", "none")
+        $("#guessDiv").css("display", "none")
         $("#youWon").text("Wrong! Lose 150 Points!")
     }
 }
@@ -433,7 +479,7 @@ function addNewScore(name) {
     scoreList.push({ "Name": "'" + name + "'", "Score": score, "Date": today })
 
     localStorage.setItem('scoreJSON', JSON.stringify(scoreList));
-
+    scorePosted = true
 
     loadHighScoreBoard()
 }
@@ -466,9 +512,18 @@ function loadHighScoreBoard() {
 
     $("#youWon").css("display", "none")
     $("#guessTown").css("display", "none")
-    $("#guessBtn").css("display", "none")
+    $("#guessDiv").css("display", "none")
+    $("#aboutContainer").css("display", "none")
     $("#scoreContainer").css("display", "block")
 
+}
+
+function loadAbout() {
+    $("#youWon").css("display", "none")
+    $("#guessTown").css("display", "none")
+    $("#guessDiv").css("display", "none")
+    $("#scoreContainer").css("display", "none")
+    $("#aboutContainer").css("display", "block")
 }
 
 function endGame() {
