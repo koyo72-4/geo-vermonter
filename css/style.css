@@ -185,11 +185,12 @@ body {
     background: url("../images/beige.jpg");
     border: 2px solid black;
     margin:5px;
-    padding:5px;
+	padding:5px;
+	max-width: 200px;
 }
 
 #buttons button {
-	width: 175px;
+	width: 90%;
 	margin: 10px;
 	color: rgb(7, 40, 80);
 	font-size:20px;
