@@ -485,22 +485,24 @@ function addNewScore(name) {
 }
 
 function loadHighScoreBoard() {
-    let scoreList = JSON.parse(localStorage.getItem('scoreJSON'));
-
-    scoreList.sort((first, second) => {
-        if (first.Score > second.Score) {
-            return -1;
-        } else if (first.Score < second.Score) {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
-
-    localStorage.setItem('scoreJSON', JSON.stringify(scoreList))
-
     $("#scoreTable").empty()
     $("#modalTitle").html("High Score Board...")
+    let scoreList = JSON.parse(localStorage.getItem('scoreJSON'));
+    // console.log(scoreList.length)
+    console.log(scoreList)
+    if (scoreList != null) {
+        scoreList.sort((first, second) => {
+            if (first.Score > second.Score) {
+                return -1;
+            } else if (first.Score < second.Score) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+    
+
+    localStorage.setItem('scoreJSON', JSON.stringify(scoreList))
 
     for (i = 0; i < scoreList.length; i++) {
         $("#scoreTable").append("<tr>")
@@ -509,7 +511,7 @@ function loadHighScoreBoard() {
         $("#scoreTable").append("<td>" + scoreList[i].Date + "</td>");
         $("#scoreTable").append("</tr>")
     }
-
+    }
     $("#youWon").css("display", "none")
     $("#guessTown").css("display", "none")
     $("#guessDiv").css("display", "none")
@@ -547,42 +549,42 @@ function endGame() {
 dragElement(document.getElementById("direction-buttons"));
 
 function dragElement(elmnt) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id + "header")) {
-    /* if present, the header is where you move the DIV from:*/
-    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-  } else {
-    /* otherwise, move the DIV from anywhere inside the DIV:*/
-    elmnt.onmousedown = dragMouseDown;
-  }
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (document.getElementById(elmnt.id + "header")) {
+        /* if present, the header is where you move the DIV from:*/
+        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    } else {
+        /* otherwise, move the DIV from anywhere inside the DIV:*/
+        elmnt.onmousedown = dragMouseDown;
+    }
 
-  function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
-  }
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+    }
 
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-  }
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
 
-  function closeDragElement() {
-    /* stop moving when mouse button is released:*/
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
+    function closeDragElement() {
+        /* stop moving when mouse button is released:*/
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
 }
