@@ -1,27 +1,34 @@
 let startLat, startLon;
 let currLat, currLon;
+
 let correctCounty;
 let correctTown;
 let selectedTown;
 
+let map
+let ethanIcon
+let breadIcon
 let currentZoom
+let gameZoom
+let openZoom
 let marker
 let markerBread
 
+
 let gameState
-let score = 1000;
+let countyWin
+let townSelected = false
+let scorePosted = false
+let score
 
-let gameZoom = 15
-let openZoom = 7
-
-let VTboundingBox = {
+const VTboundingBox = {
     maxLon: -73.3654,
     minLon: -71.5489,
     maxLat: 45.0065,
     minLat: 42.7395
 };
 
-let countyNumbers = {
+const countyNumbers = {
     Franklin: 11,
     'Grand Isle': 13,
     Orleans: 19,
@@ -38,137 +45,164 @@ let countyNumbers = {
     Bennington: 3
 }
 
-var map = L.map("map", {
-    center: [44.050254, -72.575367],
-    zoom: openZoom,
-    fadeAnimation: true,
-    zoomAnimation: true
-});
+let elements;
 
+function initize() {
 
-var carmenIcon = L.icon({
-    iconUrl: './images/ethanAllen.png',
-    iconSize: [56, 46.51],
-    iconAnchor: [14, 46.51],
-    popupAnchor: [0, -46.51]
-});
+    score = 1000;
 
-var breadIcon = L.icon({
-    iconUrl: './images/breadCrmb.png',
-    iconSize: [50, 41.52],
-    iconAnchor: [25, 41.52]
-});
+    initizeMap();
 
-let startButton = document.getElementById("start");
-startButton.addEventListener('click', startGame);
+    elements = {
+        startButton: document.getElementById("start"),
+        map: document.getElementById('map')
+    };
 
-let latitude = document.getElementById("latitude");
-let latVal = document.getElementById("latVal");
-let longitude = document.getElementById("longitude");
-let fullStateLayer = L.geoJson(border_data);
+    elements.startButton.addEventListener('click', startGame);
 
-map.dragging.disable()
-fullStateLayer.addTo(map)
-map.dragging.disable();
-map.touchZoom.disable();
-map.doubleClickZoom.disable();
-map.scrollWheelZoom.disable();
-map.boxZoom.disable();
-map.keyboard.disable();
-if (map.tap) map.tap.disable();
-
-document.getElementById('map').style.cursor = 'default';
-document.getElementById('guessTown').style.display = 'none';
-$("#scoreContainer").css("display", "none")
-
-$("#myModal").on('hidden.bs.modal', function () {
-    $("#youWon").css("display", "none")
-    $("#scoreContainer").css("display", "none")
+    elements.map.style.cursor = 'default';
     document.getElementById('guessTown').style.display = 'none';
-    $("#guessBtn").css("display", "block")
-});
+    $("#scoreContainer").css("display", "none")
 
-$("#guessBtn").on('click', function () {
+    addEventHandlers();
+    activateCountyBtnListeners()
+    initiateDirectionButtons()
+    initiateNavButtons()
+}
 
-    if (event.target.tagName === "BUTTON") {
-        let clickedCounty = event.target.id
-        event.target.disabled = true
-        winTest(clickedCounty)
-    }
+function addEventHandlers() {
+    $("#myModal").on('hidden.bs.modal', function () {
+        $("#youWon").css("display", "none");
+        $("#scoreContainer").css("display", "none");
+        $("#aboutContainer").css("display", "none")
+        document.getElementById('guessTown').style.display = 'none';
+        $("#guessDiv").css("display", "block");
+        $("#modalTitle").html("Where in Vermont is Ethan Allen?");
+    });
+    $("#quit").on('click', function () {
+        $("#countyVal").text(correctCounty);
+        $("#townVal").html(correctTown);
+        $("#latVal").text(startLat.toFixed(4));
+        $("#longVal").text(startLon.toFixed(4));
+        elements.startButton.disabled = false;
+        $("#quit").prop("disabled", true)
+        $("#guess").prop("disabled", true)
+    });
 
-});
+    $("#guess").on('click', function () {
 
-$("#quit").on('click', function () {
+        if (gameState === "over") {
+            $("#youWon").css("display", "none");
+            $("#scoreContainer").css("display", "none");
+            $("#aboutContainer").css("display", "none")
+            $("#guessTown").css("display", "none")
+            $("#guessDiv").css("display", "block")
+        }
+        if (countyWin === true) {
+            $("#youWon").css("display", "block");
+            $("#scoreContainer").css("display", "none");
+            $("#aboutContainer").css("display", "none")
+            $("#guessTown").css("display", "block")
+            $("#guessDiv").css("display", "none")
+        }
+        if (gamstate = "playing" && countyWin != true) {
+            $("#youWon").css("display", "none");
+            $("#scoreContainer").css("display", "none");
+            $("#aboutContainer").css("display", "none")
+            $("#guessTown").css("display", "none")
+            $("#guessDiv").css("display", "block")
+        }
 
+    });
+    $("#zoomIn").on('click', function () {
+        zoom("in");
+    });
+    $("#zoomOut").on('click', function () {
+        zoom("out");
+    });
+    $("#addScore").on('click', function () {
+        addNewScore(document.getElementById("userName").value);
+    });
+}
 
-    $("#countyVal").text(correctCounty)
-    $("#townVal").html(correctTown)
-    $("#latVal").text(startLat.toFixed(4))
-    $("#longVal").text(startLon.toFixed(4))
+function initizeMap() {
+    gameZoom = 15;
+    openZoom = 7;
+    map = L.map("map", {
+        center: [44.050254, -72.575367],
+        zoom: openZoom,
+        fadeAnimation: true,
+        zoomAnimation: true
+    });
+    let Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        // attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
+    Esri_WorldImagery.addTo(map);
+    ethanIcon = L.icon({
+        iconUrl: './images/ethanAllen.png',
+        iconSize: [56, 46.51],
+        iconAnchor: [14, 46.51],
+        popupAnchor: [0, -46.51]
+    });
+    breadIcon = L.icon({
+        iconUrl: './images/breadCrmb.png',
+        iconSize: [50, 41.52],
+        iconAnchor: [25, 41.52]
+    });
+    let fullStateLayer = L.geoJson(border_data);
+    map.dragging.disable();
+    fullStateLayer.addTo(map);
+    map.dragging.disable();
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+    map.boxZoom.disable();
+    map.keyboard.disable();
+    if (map.tap)
+        map.tap.disable();
+}
 
-    startButton.disabled = false;
-    quit.disabled = true;
-    guess.disabled = true;
-});
+function activateCountyBtnListeners() {
+    $("#guessDiv").on('click', function () {
 
-$("#zoomIn").on('click', function () {
-    zoom("in");
-});
+        if (event.target.tagName === "BUTTON") {
+            let clickedCounty = event.target.id
+            event.target.disabled = true
+            winTest(clickedCounty)
+        }
 
-$("#zoomOut").on('click', function () {
-    zoom("out");
-});
+    });
+}
 
-var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    // attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-});
+function initiateDirectionButtons() {
+    $("#direction-buttons").on('click', function () {
+        if (event.target.tagName === "BUTTON") {
+            travel(event.target.id);
+        }
+        if (event.target.tagName === "I" || event.target.tagName === "IMG") {
+            travel($(event.target).parent()[0].id);
+        }
+    });
+}
 
-Esri_WorldImagery.addTo(map)
+function initiateNavButtons() {
+    $("#highScores").on('click', function () {
+        loadHighScoreBoard()
+    });
 
-$("#north").on('click', function () {
-    travel("north");
-});
-
-$("#west").on('click', function () {
-    travel("west");
-});
-
-$("#east").on('click', function () {
-    travel("east");
-});
-
-$("#south").on('click', function () {
-    travel("south");
-});
-
-$("#southeast").on('click', function () {
-    travel("southeast");
-});
-
-$("#southwest").on('click', function () {
-    travel("southwest");
-});
-
-$("#northeast").on('click', function () {
-    travel("northeast");
-});
-
-$("#northwest").on('click', function () {
-    travel("northwest");
-});
-
-$("#center").on('click', function () {
-    travel("home");
-});
+    $("#aboutBtn").on('click', function () {
+        loadAbout()
+    });
+}
 
 function startGame() {
 
     if (marker != undefined) {
         marker.remove();
     }
-    startButton.disabled = true;
-    quit.disabled = false;
-    guess.disabled = false;
+    elements.startButton.disabled = true;
+    $("#quit").prop("disabled", false)
+    $("#guess").prop("disabled", false)
 
     latVal.textContent = "?"
     longVal.textContent = "?"
@@ -180,6 +214,7 @@ function startGame() {
     getRandomLat(VTboundingBox["minLat"], VTboundingBox["maxLat"])
     getRandomLon(VTboundingBox["minLon"], VTboundingBox["maxLon"])
 
+    console.log(startLat, startLon)
     pipTest(startLat, startLon);
     correctTown = getTown(startLat, startLon);
 }
@@ -204,21 +239,23 @@ function pipTest(lat, lon) {
 
         pipTest(startLat, startLon);
     } else {
-        setStartPoint()
+        setStartPoint(map)
     }
 }
 
-function setStartPoint() {
-
-    fullStateLayer.remove();
+function setStartPoint(map) {
     currentZoom = gameZoom
-    marker = L.marker([startLat, startLon], { icon: carmenIcon });
+    marker = L.marker([startLat, startLon], { icon: ethanIcon });
     currLat = startLat
     currLon = startLon
     marker.addTo(map);
     marker.bindPopup("Where am I?").openPopup();
 
     gameState = "playing"
+    townSelected = false
+    scorePosted = false
+    countyWin = false
+
     map.setView([startLat, startLon], currentZoom, {
         pan: {
             animate: true,
@@ -250,7 +287,7 @@ function zoom(way) {
     }
     else {
         currentZoom += -1
-        changeScore(-50)
+        changeScore(-150)
     }
     map.setZoom(currentZoom)
 
@@ -266,11 +303,17 @@ function enableZoomDirCountyButtons() {
         $(this).prop('disabled', false)
     })
 
-    $("#guessBtn button").each(function (index) {
+    $("#guessDiv button").each(function (index) {
         $(this).prop('disabled', false)
     })
 }
 
+function disableCountyButtons() {
+
+    $("#guessDiv button").each(function (index) {
+        $(this).prop('disabled', true)
+    })
+}
 
 function getRandomLat(min, max) {
     startLat = Math.random() * (max - min) + min; //The maximum is inclusive and the minimum is inclusive
@@ -344,7 +387,9 @@ function changeScore(pointDifference) {
 
 function winTest(clickedCounty) {
     if (clickedCounty === correctCounty) {
-        $("#guessBtn").css("display", "none")
+        disableCountyButtons()
+        countyWin = true
+        $("#guessDiv").css("display", "none")
         $("#youWon").text("YOU WON!!!")
         $("#youWon").css("display", "block")
         document.getElementById('guessTown').style.display = 'block';
@@ -386,7 +431,7 @@ function winTest(clickedCounty) {
 
         $('#townsList').on('change', function (event) {
             selectedTown = event.target.value;
-            console.log('selectedTown: ' + '"' + selectedTown + '"');
+            townSelected = true
         });
 
         $('#townSubmit').one('click', function () {
@@ -395,29 +440,22 @@ function winTest(clickedCounty) {
                 changeScore(500);
                 console.log('score:', score);
                 $("#townVal").html(correctTown);
-                endGame();
             } else {
                 $('#townAnswer').text('Sorry. The town was ' + correctTown + '. But great job getting the county!');
                 $("#townVal").html(correctTown);
                 $("#townVal").html(correctTown);
-                endGame();
             }
+            elements.startButton.disabled = false;
         });
     }
 
     else {
         changeScore(-150)
         $("#youWon").css("display", "block")
-        $("#guessBtn").css("display", "none")
+        $("#guessDiv").css("display", "none")
         $("#youWon").text("Wrong! Lose 150 Points!")
     }
 }
-
-$("#addScore").on('click', function () {
-
-    addNewScore(document.getElementById("userName").value);
-});
-
 
 function addNewScore(name) {
     if (!localStorage.getItem('scoreJSON')) {
@@ -428,8 +466,8 @@ function addNewScore(name) {
     var today = new Date();
     var dd = today.getDate();
     var mm = today.getMonth() + 1; //January is 0!
-
     var yyyy = today.getFullYear();
+
     if (dd < 10) {
         dd = '0' + dd;
     }
@@ -440,23 +478,29 @@ function addNewScore(name) {
     scoreList.push({ "Name": "'" + name + "'", "Score": score, "Date": today })
 
     localStorage.setItem('scoreJSON', JSON.stringify(scoreList));
-
+    scorePosted = true
 
     loadHighScoreBoard()
+    endGame();
 }
 
 function loadHighScoreBoard() {
+    $("#scoreTable").empty()
+    $("#modalTitle").html("High Score Board...")
     let scoreList = JSON.parse(localStorage.getItem('scoreJSON'));
-
-    scoreList.sort((first, second) => {
-        if (first.Score > second.Score) {
-            return -1;
-        } else if (first.Score < second.Score) {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
+    // console.log(scoreList.length)
+    console.log(scoreList)
+    if (scoreList != null) {
+        scoreList.sort((first, second) => {
+            if (first.Score > second.Score) {
+                return -1;
+            } else if (first.Score < second.Score) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+    
 
     localStorage.setItem('scoreJSON', JSON.stringify(scoreList))
 
@@ -467,31 +511,80 @@ function loadHighScoreBoard() {
         $("#scoreTable").append("<td>" + scoreList[i].Date + "</td>");
         $("#scoreTable").append("</tr>")
     }
-
+    }
     $("#youWon").css("display", "none")
     $("#guessTown").css("display", "none")
+    $("#guessDiv").css("display", "none")
+    $("#aboutContainer").css("display", "none")
     $("#scoreContainer").css("display", "block")
 
 }
 
+function loadAbout() {
+    $("#youWon").css("display", "none")
+    $("#guessTown").css("display", "none")
+    $("#guessDiv").css("display", "none")
+    $("#scoreContainer").css("display", "none")
+    $("#aboutContainer").css("display", "block")
+}
 
 function endGame() {
     gameState = "over";
-    var highscore = localStorage.getItem("highscore");
+    // var highscore = localStorage.getItem("highscore");
 
-    if (highscore !== null) {
-        if (score > highscore) {
-            alert("You beat the high score which was " + highscore)
-            localStorage.setItem("highscore", score);
-        }
-    }
-    else {
-        localStorage.setItem("highscore", score);
-    }
-
-    startButton.disabled = false;
-    quit.disabled = true;
-    guess.disabled = true;
+    // if (highscore !== null) {
+    //     if (score > highscore) {
+    //         alert("You beat the high score which was " + highscore)
+    //         localStorage.setItem("highscore", score);
+    //     }
+    // }
+    // else {
+    //     localStorage.setItem("highscore", score);
+    // }
+    $("#quit").prop("disabled", true)
+    $("#guess").prop("disabled", true)
+    elements.startButton.disabled = false;
 }
 
+dragElement(document.getElementById("direction-buttons"));
 
+function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (document.getElementById(elmnt.id + "header")) {
+        /* if present, the header is where you move the DIV from:*/
+        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    } else {
+        /* otherwise, move the DIV from anywhere inside the DIV:*/
+        elmnt.onmousedown = dragMouseDown;
+    }
+
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+        /* stop moving when mouse button is released:*/
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+}
