@@ -47,11 +47,11 @@ const countyNumbers = {
 
 let elements;
 
-function initize() {
+function initialize() {
 
     score = 1000;
 
-    initizeMap();
+    initializeMap();
 
     elements = {
         startButton: document.getElementById("start"),
@@ -125,7 +125,7 @@ function addEventHandlers() {
     });
 }
 
-function initizeMap() {
+function initializeMap() {
     gameZoom = 15;
     openZoom = 7;
     map = L.map("map", {
