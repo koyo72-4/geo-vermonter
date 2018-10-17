@@ -488,7 +488,6 @@ function loadHighScoreBoard() {
     $("#scoreTable").empty()
     $("#modalTitle").html("High Score Board...")
     let scoreList = JSON.parse(localStorage.getItem('scoreJSON'));
-    // console.log(scoreList.length)
     console.log(scoreList)
     if (scoreList != null) {
         scoreList.sort((first, second) => {
@@ -530,17 +529,6 @@ function loadAbout() {
 
 function endGame() {
     gameState = "over";
-    // var highscore = localStorage.getItem("highscore");
-
-    // if (highscore !== null) {
-    //     if (score > highscore) {
-    //         alert("You beat the high score which was " + highscore)
-    //         localStorage.setItem("highscore", score);
-    //     }
-    // }
-    // else {
-    //     localStorage.setItem("highscore", score);
-    // }
     $("#quit").prop("disabled", true)
     $("#guess").prop("disabled", true)
     elements.startButton.disabled = false;
